@@ -6,7 +6,7 @@ public class MapGenerator : MonoBehaviour
 {
     public MeshTextureRenderer renderer;
 
-    const int chunkSize = 241;
+    public const int chunkSize = 241;
     [Range(0, 6)]
     public int lod; //1, 2, 4, 6, 8, 10 or 12 (saved in range 0-6)
 
