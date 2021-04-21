@@ -19,12 +19,28 @@ public static class TextureGenerator
         int width = map.GetLength(0);
         int height = map.GetLength(1);
 
+        return TextureFromColorMap(ColorArrayFromGrayscaleMap(map, mapper), width, height);
+    }
+
+    public static Color[] ColorArrayFromGrayscaleMap(float[,] map)
+    {
+        return ColorArrayFromGrayscaleMap(map, (value) => Color.Lerp(Color.black, Color.white, value));
+    }
+    public static Color[] ColorArrayFromGrayscaleMap(float[,] map, Gradient gradient)
+    {
+        return ColorArrayFromGrayscaleMap(map, (value) => gradient.Evaluate(value));
+    }
+    public static Color[] ColorArrayFromGrayscaleMap(float[,] map, System.Func<float, Color> mapper)
+    {
+        int width = map.GetLength(0);
+        int height = map.GetLength(1);
+
         Color[] colorMap = new Color[width * height];
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
                 colorMap[y * width + x] = mapper.Invoke(map[x, y]);
 
-        return TextureFromColorMap(colorMap, width, height);
+        return colorMap;
     }
 
     public static Texture2D TextureFromColorMap(Color[] map, int width, int height)

@@ -43,6 +43,9 @@ public class MeshGenerator
         if (lod < 0 || lod > 6)
             throw new ArgumentException("LOD for mesh generation must be in [0, 6]");
 
+        // Clone heightFunction for multi-threaded access
+        heightFunction = new AnimationCurve(heightFunction.keys);
+
         int width = map.GetLength(0);
         int height = map.GetLength(1);
 

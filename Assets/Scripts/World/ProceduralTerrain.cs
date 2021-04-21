@@ -8,6 +8,8 @@ public class ProceduralTerrain : MonoBehaviour
     public const int viewDistance = 2; // View distance in chunks
     public Transform viewer;
     public GameObject chunkContainer;
+    public MapGenerator generator;
+    public Material terrainMaterial;
 
     private Dictionary<Vector2Int, TerrainChunk> chunks = new Dictionary<Vector2Int, TerrainChunk>();
 
@@ -42,15 +44,21 @@ public class ProceduralTerrain : MonoBehaviour
 
     private void LoadChunk(Vector2Int chunkPosition)
     {
-        GameObject chunkObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        chunkObject.transform.SetParent(chunkContainer.transform);
-        chunkObject.transform.position = new Vector3((chunkPosition.x + 0.5f) * ChunkSize, -1, (chunkPosition.y + 0.5f) * ChunkSize);
-        chunkObject.transform.localScale = new Vector3(ChunkSize / 10.0f, 1, ChunkSize / 10.0f); // 10.0f is plane size
+        GameObject chunkObject = new GameObject();
         chunkObject.name = chunkPosition.ToString();
 
-        TerrainChunk chunk = chunkObject.AddComponent<TerrainChunk>();
+        // Set position and parent
+        chunkObject.transform.SetParent(chunkContainer.transform);
+        chunkObject.transform.position = new Vector3((chunkPosition.x + 0.5f) * ChunkSize, -1, (chunkPosition.y + 0.5f) * ChunkSize);
+
+        var meshFilter = chunkObject.AddComponent<MeshFilter>();
+        var meshRenderer = chunkObject.AddComponent<MeshRenderer>();
+        var chunk = chunkObject.AddComponent<TerrainChunk>();
+        meshRenderer.sharedMaterial = terrainMaterial;
         chunk.terrain = this;
+        chunk.generator = generator;
         chunk.chunkCoordinate = chunkPosition;
+        chunk.Setup();
 
         chunks.Add(chunkPosition, chunk);
     }

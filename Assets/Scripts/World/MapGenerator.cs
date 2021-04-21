@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
@@ -31,14 +33,70 @@ public class MapGenerator : MonoBehaviour
     // This is used in the Editor extension
     public bool autoUpdate;
 
-    public void GenerateMap()
+    public class MapData
     {
-        if (renderer == null)
-            return;
+        public float[,] map;
+        public MeshData meshData;
+        public Color[] textureData;
 
-        var map = NoiseGenerator.GenerateNoisemap(chunkSize, chunkSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
-        var mesh = MeshGenerator.GenerateTerrainMesh(map, lod, heightFactor, heightCurve);
+        public MapData()
+        {
+        }
 
-        renderer.DrawMesh(mesh, TextureGenerator.TextureFromGrayscaleMap(map, regions));
+        public MapData(float[,] map, MeshData meshData, Color[] texture)
+        {
+            this.map = map;
+            this.meshData = meshData;
+            this.textureData = texture;
+        }
+    }
+
+    private class GeneratorJob
+    {
+        public MapData result;
+        public Action<MapData> callback;
+
+        public GeneratorJob()
+        {
+        }
+
+        public GeneratorJob(MapData jobResult, Action<MapData> callBack)
+        {
+            this.result = jobResult;
+            this.callback = callBack;
+        }
+    }
+
+    Queue<GeneratorJob> generatorResults = new Queue<GeneratorJob>();
+    public void GenerateMapDataAsync(Action<MapData> callback)
+    {
+        new Thread(() =>
+        {
+            lock (generatorResults)
+            {
+                MapData data = GenerateMapData();
+                generatorResults.Enqueue(new GeneratorJob(data, callback));
+            }
+        }).Start();
+    }
+
+    public void Update()
+    {
+        if (generatorResults.Count > 0)
+        {
+            var job = generatorResults.Dequeue();
+            job.callback(job.result);
+        }
+    }
+
+    public MapData GenerateMapData()
+    {
+        MapData mapData = new MapData();
+
+        mapData.map = NoiseGenerator.GenerateNoisemap(chunkSize, chunkSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
+        mapData.meshData = MeshGenerator.GenerateTerrainMesh(mapData.map, lod, heightFactor, heightCurve);
+        mapData.textureData = TextureGenerator.ColorArrayFromGrayscaleMap(mapData.map, regions);
+
+        return mapData;
     }
 }
