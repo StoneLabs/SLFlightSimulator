@@ -6,8 +6,13 @@ public class MapGenerator : MonoBehaviour
 {
     public MeshTextureRenderer renderer;
 
+    [Range(0, 200)]
     public int mapWidth = 0;
+    [Range(0, 200)]
     public int mapHeight = 0;
+    [Range(0, 100)]
+    public int heightFactor = 0;
+    public AnimationCurve heightCurve;
 
     [Range(0.0001f, 50)]
     public float noiseScale = 0;
@@ -32,7 +37,7 @@ public class MapGenerator : MonoBehaviour
             return;
 
         var map = NoiseGenerator.GenerateNoisemap(mapWidth, mapHeight, seed, noiseScale, octaves, persistance, lacunarity, offset);
-        var mesh = MeshGenerator.GenerateTerrainMesh(map);
+        var mesh = MeshGenerator.GenerateTerrainMesh(map, heightFactor, heightCurve);
 
         renderer.DrawMesh(mesh, TextureGenerator.TextureFromGrayscaleMap(map, regions));
     }

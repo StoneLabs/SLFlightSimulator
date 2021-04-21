@@ -37,7 +37,7 @@ public class MeshData
 
 public class MeshGenerator
 {
-    public static MeshData GenerateTerrainMesh(float[,] map)
+    public static MeshData GenerateTerrainMesh(float[,] map, float heightFactor, AnimationCurve heightFunction)
     {
         int width = map.GetLength(0);
         int height = map.GetLength(1);
@@ -50,7 +50,7 @@ public class MeshGenerator
         for (int vertexIndex = 0, y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
             {
-                meshData.vertices[vertexIndex] = new Vector3(x - centerOffsetX, map[x, y] * 10, centerOffsetY - y);
+                meshData.vertices[vertexIndex] = new Vector3(x - centerOffsetX, heightFunction.Evaluate(map[x, y]) * heightFactor, centerOffsetY - y);
                 meshData.uv[vertexIndex] = new Vector2(x / (float)width, y / (float)height);
 
                 if (x < width - 1 && y < height - 1)
