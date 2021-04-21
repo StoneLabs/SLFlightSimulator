@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MapDisplay))]
 public class MapGenerator : MonoBehaviour
 {
+    public TextureRenderer textureRenderer;
+
     public int mapWidth = 0;
     public int mapHeight = 0;
 
@@ -20,6 +21,8 @@ public class MapGenerator : MonoBehaviour
     public Vector2 offset;
     public int seed;
 
+    public Gradient regions;
+
     // This is used in the Editor extension
     public bool autoUpdate;
 
@@ -27,7 +30,6 @@ public class MapGenerator : MonoBehaviour
     {
         var map = NoiseGenerator.GenerateNoisemap(mapWidth, mapHeight, seed, noiseScale, octaves, persistance, lacunarity, offset);
 
-        MapDisplay display = FindObjectOfType<MapDisplay>();
-        display.DrawNoiseMap(map);
+        textureRenderer.DrawTexture(TextureGenerator.TextureFromGrayscaleMap(map, regions));
     }
 }

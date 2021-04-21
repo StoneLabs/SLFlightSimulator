@@ -15,6 +15,9 @@ public static class NoiseGenerator
         if (scale <= 0)
             throw new ArgumentException("Illegal scale supplied to Noisemap generator");
 
+        if (octaves <= 0)
+            throw new ArgumentException("Illegal number of octaves supplied to Noisemap generator");
+
         // System random from seed
         System.Random random = new System.Random(seed);
         Vector2[] seedOffsets = new Vector2[octaves];
