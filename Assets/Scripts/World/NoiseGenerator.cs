@@ -6,8 +6,14 @@ using UnityEngine;
 
 public static class NoiseGenerator
 {
+    public enum NormMode
+    {
+        Local,
+        Global
+    }
+
     // Reference: https://adrianb.io/2014/08/09/perlinnoise.html
-    public static float[,] GenerateNoisemap(int width, int height, int seed, float scale, uint octaves, float persistance, float lacunarity, Vector2 offset)
+    public static float[,] GenerateNoisemap(int width, int height, int seed, float scale, uint octaves, float persistance, float lacunarity, NormMode mode, Vector2 offset)
     {
         if (width <= 0 || height <= 0)
             throw new ArgumentException("Illegal dimensions supplied to Noisemap generator");
@@ -28,7 +34,7 @@ public static class NoiseGenerator
 
         // 2d float array to store perlin noise data
         float[,] noiseMap = new float[width, height];
-        Vector2 noiseRange = new Vector2(float.MaxValue, float.MinValue); // (min, max)
+        Vector2 localNoiseRange = new Vector2(float.MaxValue, float.MinValue); // (min, max)
 
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
@@ -39,8 +45,8 @@ public static class NoiseGenerator
 
                 for (int octave = 0; octave < octaves; octave++)
                 {
-                    float perlinX = (x + offset.x - width/2) / scale * frequency + seedOffsets[octave].x;
-                    float perlinY = (y + offset.y - height/2) / scale * frequency + seedOffsets[octave].y;
+                    float perlinX = (x + offset.x - width/ 2 + seedOffsets[octave].x) / scale * frequency;
+                    float perlinY = (y - offset.y - height/ 2 + seedOffsets[octave].y) / scale * frequency;
 
                     noiseMap[x, y] += amplitude * (Mathf.PerlinNoise(perlinX, perlinY) * 2 - 1);
 
@@ -51,14 +57,32 @@ public static class NoiseGenerator
                     amplitude *= persistance;
                 }
 
-                noiseRange.x = Math.Min(noiseRange.x, noiseMap[x, y]);
-                noiseRange.y = Math.Max(noiseRange.y, noiseMap[x, y]);
+                localNoiseRange.x = Math.Min(localNoiseRange.x, noiseMap[x, y]);
+                localNoiseRange.y = Math.Max(localNoiseRange.y, noiseMap[x, y]);
             }
+
+        // Calculate theoretical max and min values for Global mode
+        float maxHeight = 0;
+        {
+            float amplitude = 1;
+            for (int octave = 0; octave < octaves; octave++)
+            {
+                maxHeight += amplitude;
+                amplitude *= persistance;
+            }
+        }
+
 
         // Remap array to range (0, 1)
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
-                noiseMap[x, y] = (noiseRange.y == noiseRange.x) ? 0 : (noiseMap[x, y] - noiseRange.x) / (noiseRange.y - noiseRange.x);
+                if (mode == NormMode.Local)
+                    noiseMap[x, y] = (localNoiseRange.y == localNoiseRange.x) ? 0 : (noiseMap[x, y] - localNoiseRange.x) / (localNoiseRange.y - localNoiseRange.x);
+                else
+                {
+                    float normalizedHeight = (noiseMap[x, y] + 1) / (maxHeight / 0.9f);
+                    noiseMap[x, y] = Mathf.Clamp(normalizedHeight, 0, int.MaxValue);
+                }
 
         return noiseMap;
     }

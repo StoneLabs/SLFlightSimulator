@@ -14,7 +14,7 @@ public class TerrainChunk : MonoBehaviour
 
     public void Setup()
     {
-        generator.GenerateMapDataAsync(new Vector2(chunkCoordinate.x * terrain.ChunkSize, chunkCoordinate.y * -terrain.ChunkSize), (MapGenerator.MapData data) =>
+        generator.GenerateMapDataAsync(new Vector2(chunkCoordinate.x * terrain.ChunkSize, chunkCoordinate.y * terrain.ChunkSize), (MapGenerator.MapData data) =>
         {
             this.data = data;
         });

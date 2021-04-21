@@ -16,7 +16,7 @@ public class MapGenerator : MonoBehaviour
     public int heightFactor = 0;
     public AnimationCurve heightCurve;
 
-    [Range(0.0001f, 50)]
+    [Range(0.0001f, 150)]
     public float noiseScale = 0;
 
     public uint octaves;
@@ -93,7 +93,7 @@ public class MapGenerator : MonoBehaviour
     {
         MapData mapData = new MapData();
 
-        mapData.map = NoiseGenerator.GenerateNoisemap(chunkSize, chunkSize, seed, noiseScale, octaves, persistance, lacunarity, offset + localOffset);
+        mapData.map = NoiseGenerator.GenerateNoisemap(chunkSize, chunkSize, seed, noiseScale, octaves, persistance, lacunarity, NoiseGenerator.NormMode.Global, offset + localOffset);
         mapData.textureData = TextureGenerator.ColorArrayFromGrayscaleMap(mapData.map, regions);
         for (int i = 0; i <= 6; i++)
             mapData.LODMeshData[i] = MeshGenerator.GenerateTerrainMesh(mapData.map, i, heightFactor, heightCurve);
