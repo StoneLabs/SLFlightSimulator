@@ -36,17 +36,17 @@ public class MapGenerator : MonoBehaviour
     public class MapData
     {
         public float[,] map;
-        public MeshData meshData;
+        public MeshData[] LODMeshData = new MeshData[7];
         public Color[] textureData;
 
         public MapData()
         {
         }
 
-        public MapData(float[,] map, MeshData meshData, Color[] texture)
+        public MapData(float[,] map, MeshData[] LODMeshData, Color[] texture)
         {
             this.map = map;
-            this.meshData = meshData;
+            this.LODMeshData = LODMeshData;
             this.textureData = texture;
         }
     }
@@ -68,13 +68,13 @@ public class MapGenerator : MonoBehaviour
     }
 
     Queue<GeneratorJob> generatorResults = new Queue<GeneratorJob>();
-    public void GenerateMapDataAsync(Action<MapData> callback)
+    public void GenerateMapDataAsync(Vector2 offset, Action<MapData> callback)
     {
         new Thread(() =>
         {
             lock (generatorResults)
             {
-                MapData data = GenerateMapData();
+                MapData data = GenerateMapData(offset);
                 generatorResults.Enqueue(new GeneratorJob(data, callback));
             }
         }).Start();
@@ -89,13 +89,14 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    public MapData GenerateMapData()
+    public MapData GenerateMapData(Vector2 localOffset)
     {
         MapData mapData = new MapData();
 
-        mapData.map = NoiseGenerator.GenerateNoisemap(chunkSize, chunkSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
-        mapData.meshData = MeshGenerator.GenerateTerrainMesh(mapData.map, lod, heightFactor, heightCurve);
+        mapData.map = NoiseGenerator.GenerateNoisemap(chunkSize, chunkSize, seed, noiseScale, octaves, persistance, lacunarity, offset + localOffset);
         mapData.textureData = TextureGenerator.ColorArrayFromGrayscaleMap(mapData.map, regions);
+        for (int i = 0; i <= 6; i++)
+            mapData.LODMeshData[i] = MeshGenerator.GenerateTerrainMesh(mapData.map, i, heightFactor, heightCurve);
 
         return mapData;
     }

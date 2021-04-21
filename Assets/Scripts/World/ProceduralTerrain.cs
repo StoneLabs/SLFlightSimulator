@@ -5,7 +5,8 @@ using UnityEngine.UIElements;
 
 public class ProceduralTerrain : MonoBehaviour
 {
-    public const int viewDistance = 2; // View distance in chunks
+    public int viewDistance = 16; // View distance in chunks
+    public int[] LODDistances = new int[] {4, 6, 8, 10, 12, 14};
     public Transform viewer;
     public GameObject chunkContainer;
     public MapGenerator generator;
@@ -49,12 +50,12 @@ public class ProceduralTerrain : MonoBehaviour
 
         // Set position and parent
         chunkObject.transform.SetParent(chunkContainer.transform);
-        chunkObject.transform.position = new Vector3((chunkPosition.x + 0.5f) * ChunkSize, -1, (chunkPosition.y + 0.5f) * ChunkSize);
+        chunkObject.transform.position = new Vector3((chunkPosition.x + 0.5f) * ChunkSize, 0, (chunkPosition.y + 0.5f) * ChunkSize);
 
         var meshFilter = chunkObject.AddComponent<MeshFilter>();
         var meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         var chunk = chunkObject.AddComponent<TerrainChunk>();
-        meshRenderer.sharedMaterial = terrainMaterial;
+        meshRenderer.sharedMaterial = new Material(terrainMaterial);
         chunk.terrain = this;
         chunk.generator = generator;
         chunk.chunkCoordinate = chunkPosition;
@@ -69,19 +70,34 @@ public class ProceduralTerrain : MonoBehaviour
         Destroy(chunk.gameObject);
     }
 
-    public bool IsInViewDistance(Vector2Int chunkCoordinate)
+    public bool IsInDistance(Vector2Int chunkCoordinate, uint distance)
     {
-        if (chunkCoordinate.x <= ViewerChunkPosition.x - viewDistance || chunkCoordinate.x >= ViewerChunkPosition.x + viewDistance)
+        if (chunkCoordinate.x <= ViewerChunkPosition.x - distance || chunkCoordinate.x >= ViewerChunkPosition.x + distance)
             return false;
 
-        if (chunkCoordinate.y <= ViewerChunkPosition.y - viewDistance || chunkCoordinate.y >= ViewerChunkPosition.y + viewDistance)
+        if (chunkCoordinate.y <= ViewerChunkPosition.y - distance || chunkCoordinate.y >= ViewerChunkPosition.y + distance)
             return false;
 
         return true;
     }
 
+    public bool IsInViewDistance(Vector2Int chunkCoordinate)
+    {
+        return IsInDistance(chunkCoordinate, (uint)viewDistance);
+    }
+
     public bool IsInViewDistance(TerrainChunk chunk)
     {
         return IsInViewDistance(chunk.chunkCoordinate);
+    }
+
+    public int LODTarget(TerrainChunk chunk)
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (IsInDistance(chunk.chunkCoordinate, (uint)LODDistances[i]))
+                return i;
+        }
+        return 6;
     }
 }

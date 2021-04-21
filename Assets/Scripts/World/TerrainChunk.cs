@@ -9,12 +9,14 @@ public class TerrainChunk : MonoBehaviour
     public Vector2Int chunkCoordinate;
     public MapGenerator generator;
 
+    private MapGenerator.MapData data = null; 
+    private int currentLOD = -1;
+
     public void Setup()
     {
-        generator.GenerateMapDataAsync((MapGenerator.MapData data) =>
+        generator.GenerateMapDataAsync(new Vector2(chunkCoordinate.x * terrain.ChunkSize, chunkCoordinate.y * -terrain.ChunkSize), (MapGenerator.MapData data) =>
         {
-            MeshTextureRenderer renderer = GetComponent<MeshTextureRenderer>();
-            renderer.DrawMesh(data.meshData, TextureGenerator.TextureFromColorMap(data.textureData, MapGenerator.chunkSize, MapGenerator.chunkSize));
+            this.data = data;
         });
     }
 
@@ -22,5 +24,16 @@ public class TerrainChunk : MonoBehaviour
     {
         if (!terrain.IsInViewDistance(this))
             terrain.UnloadChunk(this);
+
+        if (data == null)
+            return;
+
+        int LODTarget = terrain.LODTarget(this);
+        if (currentLOD != LODTarget && (currentLOD == -1 || Random.value > 0.75))
+        {
+            currentLOD = LODTarget;
+            MeshTextureRenderer renderer = GetComponent<MeshTextureRenderer>();
+            renderer.DrawMesh(data.LODMeshData[LODTarget], TextureGenerator.TextureFromColorMap(data.textureData, MapGenerator.chunkSize, MapGenerator.chunkSize));
+        }
     }
 }
