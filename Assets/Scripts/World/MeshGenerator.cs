@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -37,26 +38,32 @@ public class MeshData
 
 public class MeshGenerator
 {
-    public static MeshData GenerateTerrainMesh(float[,] map, float heightFactor, AnimationCurve heightFunction)
+    public static MeshData GenerateTerrainMesh(float[,] map, int lod, float heightFactor, AnimationCurve heightFunction)
     {
+        if (lod < 0 || lod > 6)
+            throw new ArgumentException("LOD for mesh generation must be in [0, 6]");
+
         int width = map.GetLength(0);
         int height = map.GetLength(1);
 
         float centerOffsetX = (width - 1) / 2.0f;
         float centerOffsetY = (height - 1) / 2.0f;
 
-        MeshData meshData = new MeshData(width, height);
+        lod = (lod == 0) ? 1 : lod * 2;
+        int verticesPerLine = (width - 1) / lod + 1;
 
-        for (int vertexIndex = 0, y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
+        MeshData meshData = new MeshData(verticesPerLine, verticesPerLine);
+
+        for (int vertexIndex = 0, y = 0; y < height; y += lod)
+            for (int x = 0; x < width; x += lod)
             {
                 meshData.vertices[vertexIndex] = new Vector3(x - centerOffsetX, heightFunction.Evaluate(map[x, y]) * heightFactor, centerOffsetY - y);
                 meshData.uv[vertexIndex] = new Vector2(x / (float)width, y / (float)height);
 
                 if (x < width - 1 && y < height - 1)
                 {
-                    meshData.AddTriangle(vertexIndex, vertexIndex + width + 1, vertexIndex + width);
-                    meshData.AddTriangle(vertexIndex + width + 1, vertexIndex, vertexIndex + 1);
+                    meshData.AddTriangle(vertexIndex, vertexIndex + verticesPerLine + 1, vertexIndex + verticesPerLine);
+                    meshData.AddTriangle(vertexIndex + verticesPerLine + 1, vertexIndex, vertexIndex + 1);
                 }
 
                 vertexIndex++;
