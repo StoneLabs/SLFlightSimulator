@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
-    public TextureRenderer textureRenderer;
+    public MeshTextureRenderer renderer;
 
     public int mapWidth = 0;
     public int mapHeight = 0;
@@ -28,8 +28,12 @@ public class MapGenerator : MonoBehaviour
 
     public void GenerateMap()
     {
-        var map = NoiseGenerator.GenerateNoisemap(mapWidth, mapHeight, seed, noiseScale, octaves, persistance, lacunarity, offset);
+        if (renderer == null)
+            return;
 
-        textureRenderer.DrawTexture(TextureGenerator.TextureFromGrayscaleMap(map, regions));
+        var map = NoiseGenerator.GenerateNoisemap(mapWidth, mapHeight, seed, noiseScale, octaves, persistance, lacunarity, offset);
+        var mesh = MeshGenerator.GenerateTerrainMesh(map);
+
+        renderer.DrawMesh(mesh, TextureGenerator.TextureFromGrayscaleMap(map, regions));
     }
 }

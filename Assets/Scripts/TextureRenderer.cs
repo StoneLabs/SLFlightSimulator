@@ -13,7 +13,7 @@ public class TextureRenderer : MonoBehaviour
     public void DrawTexture(Texture2D texture)
     {
         // Use renderer or find one
-        Renderer renderer = FindObjectOfType<Renderer>();
+        Renderer renderer = GetComponent<Renderer>();
 
         // Apply texture to material
         renderer.sharedMaterial.mainTexture = texture;

@@ -58,7 +58,7 @@ public static class NoiseGenerator
         // Remap array to range (0, 1)
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
-                noiseMap[x, y] = (noiseMap[x, y] - noiseRange.x) / (noiseRange.y - noiseRange.x);
+                noiseMap[x, y] = (noiseRange.y == noiseRange.x) ? 0 : (noiseMap[x, y] - noiseRange.x) / (noiseRange.y - noiseRange.x);
 
         return noiseMap;
     }
