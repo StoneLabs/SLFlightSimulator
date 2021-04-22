@@ -14,13 +14,14 @@ public class MapGenerator : MonoBehaviour
         FLAT_HEIGHTMAP,
     }
 
+    public const int chunkSize = 241;
+
     [Header("Editor Preview Properties")]
     public EditorMode editorMode = EditorMode.COLORED;
     public NoiseGenerator.NormMode editorNormalMode = NoiseGenerator.NormMode.Local;
     public MeshTextureRenderer editorRenderer;
 
     [Header("Generator Settings")]
-    public const int chunkSize = 241;
     [Range(0, 6)]
     public int lod; //1, 2, 4, 6, 8, 10 or 12 (saved in range 0-6)
 
@@ -41,9 +42,6 @@ public class MapGenerator : MonoBehaviour
     public int seed;
 
     public Gradient regions;
-
-    // This is used in the Editor extension
-    public bool autoUpdate;
 
     public class MapData
     {
