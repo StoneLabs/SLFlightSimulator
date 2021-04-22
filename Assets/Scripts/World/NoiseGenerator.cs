@@ -86,4 +86,40 @@ public static class NoiseGenerator
 
         return noiseMap;
     }
+
+    public static float[,] GenerateFalloffMap(int size, float fallOffDistance, float falloffHardness)
+    {
+        float[,] map = new float[size, size];
+
+        for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            { 
+                float xFromCenter = (x / (float)size) * 2.0f - 1.0f; // [-1, 1]
+                float yFromCenter = (y / (float)size) * 2.0f - 1.0f; // [-1, 1]
+                float maxFromCenter = Mathf.Max(Mathf.Abs(xFromCenter), Mathf.Abs(yFromCenter));
+                map[x, y] = Mathf.Pow(maxFromCenter, falloffHardness) / 
+                    (Mathf.Pow(maxFromCenter, falloffHardness) + fallOffDistance * Mathf.Pow(1 - maxFromCenter, falloffHardness));
+            }
+
+        return map;
+    }
+
+    public static float[,] SubstractMap(float[,] mapA, float[,] mapB)
+    {
+        int widthA = mapA.GetLength(0);
+        int heightA = mapA.GetLength(1);
+
+        int widthB = mapB.GetLength(0);
+        int heightB = mapB.GetLength(1);
+
+        int width = Mathf.Min(widthA, widthB);
+        int height = Mathf.Min(heightA, heightB);
+
+        float[,] output = new float[width, height];
+        for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
+                output[x, y] = mapA[x, y] - mapB[x, y];
+
+        return output;
+    }
 }

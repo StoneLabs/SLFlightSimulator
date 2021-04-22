@@ -9,9 +9,11 @@ public class MapGenerator : MonoBehaviour
     public enum EditorMode
     {
         COLORED,
-        HEIGHTMAP,
         FLAT_COLORED,
+        HEIGHTMAP,
         FLAT_HEIGHTMAP,
+        FALLOFF,
+        FLAT_FALLOFF
     }
 
     public const int chunkSize = 241;
@@ -43,6 +45,16 @@ public class MapGenerator : MonoBehaviour
 
     public Gradient regions;
 
+    [Header("Falloff settings")]
+    public bool applyFalloff = true;
+
+    [Range(0, 20)]
+    public float falloffHardness = 0;
+    [Range(0, 20)]
+    public float falloffDistance = 0;
+
+    private float[,] fallOffMap;
+
     public class MapData
     {
         public float[,] map;
@@ -59,6 +71,11 @@ public class MapGenerator : MonoBehaviour
             this.LODMeshData = LODMeshData;
             this.textureData = texture;
         }
+    }
+
+    private void OnValidate()
+    {
+        fallOffMap = NoiseGenerator.GenerateFalloffMap(chunkSize, falloffDistance, falloffHardness);
     }
 
     private class GeneratorJob
@@ -104,6 +121,9 @@ public class MapGenerator : MonoBehaviour
         MapData mapData = new MapData();
 
         mapData.map = NoiseGenerator.GenerateNoisemap(chunkSize, chunkSize, seed, noiseScale, octaves, persistance, lacunarity, mode, offset + localOffset);
+        if (applyFalloff)
+            mapData.map = NoiseGenerator.SubstractMap(mapData.map, fallOffMap);
+
         mapData.textureData = TextureGenerator.ColorArrayFromGrayscaleMap(mapData.map, regions);
         for (int i = 0; i <= 6; i++)
             mapData.LODMeshData[i] = MeshGenerator.GenerateTerrainMesh(mapData.map, i, heightFactor, heightCurve);
@@ -114,6 +134,7 @@ public class MapGenerator : MonoBehaviour
     public void EditorRender()
     {
         MapData data = GenerateMapData(Vector2.zero, editorNormalMode);
+        MeshData falloff_mesh = MeshGenerator.GenerateTerrainMesh(fallOffMap, lod, heightFactor, AnimationCurve.Linear(0, 0, 1, 1));
         switch (editorMode)
         {
             case EditorMode.COLORED:
@@ -122,11 +143,17 @@ public class MapGenerator : MonoBehaviour
             case EditorMode.HEIGHTMAP:
                 editorRenderer.DrawMesh(data.LODMeshData[lod], TextureGenerator.TextureFromGrayscaleMap(data.map));
                 break;
+            case EditorMode.FALLOFF:
+                editorRenderer.DrawMesh(falloff_mesh, TextureGenerator.TextureFromGrayscaleMap(fallOffMap));
+                break;
             case EditorMode.FLAT_COLORED:
                 editorRenderer.DrawMesh(MeshGenerator.GeneratePlaneMesh(chunkSize, chunkSize), TextureGenerator.TextureFromColorMap(data.textureData, chunkSize, chunkSize));
                 break;
             case EditorMode.FLAT_HEIGHTMAP:
                 editorRenderer.DrawMesh(MeshGenerator.GeneratePlaneMesh(chunkSize, chunkSize), TextureGenerator.TextureFromGrayscaleMap(data.map));
+                break;
+            case EditorMode.FLAT_FALLOFF:
+                editorRenderer.DrawMesh(MeshGenerator.GeneratePlaneMesh(chunkSize, chunkSize), TextureGenerator.TextureFromGrayscaleMap(fallOffMap));
                 break;
         }
     }
