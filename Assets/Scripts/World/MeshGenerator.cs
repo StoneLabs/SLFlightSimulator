@@ -38,6 +38,27 @@ public class MeshData
 
 public class MeshGenerator
 {
+    public static MeshData GeneratePlaneMesh(float width, float height)
+    {
+        MeshData meshData = new MeshData(2, 2);
+        float centerOffsetX = (width - 1) / 2.0f;
+        float centerOffsetY = (height - 1) / 2.0f;
+
+        for (int vertexIndex = 0, y = 0; y <= 1; y += 1)
+            for (int x = 0; x <= 1; x += 1)
+            {
+                meshData.vertices[vertexIndex] = new Vector3(x * width - centerOffsetX, 0, centerOffsetY - y * height);
+                meshData.uv[vertexIndex] = new Vector2(x, y);
+
+                vertexIndex++;
+            }
+
+        meshData.AddTriangle(0, 1, 2);
+        meshData.AddTriangle(1, 3, 2);
+
+        return meshData;
+    }
+
     public static MeshData GenerateTerrainMesh(float[,] map, int lod, float heightFactor, AnimationCurve heightFunction)
     {
         if (lod < 0 || lod > 6)

@@ -6,8 +6,20 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
-    public MeshTextureRenderer renderer;
+    public enum EditorMode
+    {
+        COLORED,
+        HEIGHTMAP,
+        FLAT_COLORED,
+        FLAT_HEIGHTMAP,
+    }
 
+    [Header("Editor Preview Properties")]
+    public EditorMode editorMode = EditorMode.COLORED;
+    public NoiseGenerator.NormMode editorNormalMode = NoiseGenerator.NormMode.Local;
+    public MeshTextureRenderer editorRenderer;
+
+    [Header("Generator Settings")]
     public const int chunkSize = 241;
     [Range(0, 6)]
     public int lod; //1, 2, 4, 6, 8, 10 or 12 (saved in range 0-6)
@@ -89,15 +101,35 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    public MapData GenerateMapData(Vector2 localOffset)
+    public MapData GenerateMapData(Vector2 localOffset, NoiseGenerator.NormMode mode = NoiseGenerator.NormMode.Global)
     {
         MapData mapData = new MapData();
 
-        mapData.map = NoiseGenerator.GenerateNoisemap(chunkSize, chunkSize, seed, noiseScale, octaves, persistance, lacunarity, NoiseGenerator.NormMode.Global, offset + localOffset);
+        mapData.map = NoiseGenerator.GenerateNoisemap(chunkSize, chunkSize, seed, noiseScale, octaves, persistance, lacunarity, mode, offset + localOffset);
         mapData.textureData = TextureGenerator.ColorArrayFromGrayscaleMap(mapData.map, regions);
         for (int i = 0; i <= 6; i++)
             mapData.LODMeshData[i] = MeshGenerator.GenerateTerrainMesh(mapData.map, i, heightFactor, heightCurve);
 
         return mapData;
+    }
+
+    public void EditorRender()
+    {
+        MapData data = GenerateMapData(Vector2.zero, editorNormalMode);
+        switch (editorMode)
+        {
+            case EditorMode.COLORED:
+                editorRenderer.DrawMesh(data.LODMeshData[lod], TextureGenerator.TextureFromColorMap(data.textureData, chunkSize, chunkSize));
+                break;
+            case EditorMode.HEIGHTMAP:
+                editorRenderer.DrawMesh(data.LODMeshData[lod], TextureGenerator.TextureFromGrayscaleMap(data.map));
+                break;
+            case EditorMode.FLAT_COLORED:
+                editorRenderer.DrawMesh(MeshGenerator.GeneratePlaneMesh(chunkSize, chunkSize), TextureGenerator.TextureFromColorMap(data.textureData, chunkSize, chunkSize));
+                break;
+            case EditorMode.FLAT_HEIGHTMAP:
+                editorRenderer.DrawMesh(MeshGenerator.GeneratePlaneMesh(chunkSize, chunkSize), TextureGenerator.TextureFromGrayscaleMap(data.map));
+                break;
+        }
     }
 }
