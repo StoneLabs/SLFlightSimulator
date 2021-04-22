@@ -11,6 +11,7 @@ public class TerrainChunk : MonoBehaviour
 
     private MapGenerator.MapData data = null; 
     private int currentLOD = -1;
+    private bool hasCollider = false;
 
     public void Setup()
     {
@@ -34,6 +35,15 @@ public class TerrainChunk : MonoBehaviour
             currentLOD = LODTarget;
             MeshTextureRenderer renderer = GetComponent<MeshTextureRenderer>();
             renderer.DrawMesh(data.LODMeshData[LODTarget], TextureGenerator.TextureFromColorMap(data.textureData, MapGenerator.chunkSize, MapGenerator.chunkSize));
+        }
+
+        if (!hasCollider && terrain.IsInRealDistance(this, terrain.ColliderGenerationRadius))
+        {
+            Debug.Log(this.chunkCoordinate);
+
+            hasCollider = true;
+            MeshTextureRenderer renderer = GetComponent<MeshTextureRenderer>();
+            renderer.DrawCollider(data.LODMeshData[terrain.ColliderLOD]);
         }
     }
 }

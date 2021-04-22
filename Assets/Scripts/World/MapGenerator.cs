@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEditor;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
@@ -22,6 +23,7 @@ public class MapGenerator : MonoBehaviour
     public EditorMode editorMode = EditorMode.COLORED;
     public NoiseGenerator.NormMode editorNormalMode = NoiseGenerator.NormMode.Local;
     public MeshTextureRenderer editorRenderer;
+    public bool editorCreateCollider = false;
 
     [Header("Generator Settings")]
     [Range(0, 6)]
@@ -135,25 +137,32 @@ public class MapGenerator : MonoBehaviour
     {
         MapData data = GenerateMapData(Vector2.zero, editorNormalMode);
         MeshData falloff_mesh = MeshGenerator.GenerateTerrainMesh(fallOffMap, lod, heightFactor, AnimationCurve.Linear(0, 0, 1, 1));
+        MeshData plane = MeshGenerator.GeneratePlaneMesh(chunkSize, chunkSize);
         switch (editorMode)
         {
             case EditorMode.COLORED:
                 editorRenderer.DrawMesh(data.LODMeshData[lod], TextureGenerator.TextureFromColorMap(data.textureData, chunkSize, chunkSize));
+                editorRenderer.DrawCollider(data.LODMeshData[lod]);
                 break;
             case EditorMode.HEIGHTMAP:
                 editorRenderer.DrawMesh(data.LODMeshData[lod], TextureGenerator.TextureFromGrayscaleMap(data.map));
+                editorRenderer.DrawCollider(data.LODMeshData[lod]);
                 break;
             case EditorMode.FALLOFF:
                 editorRenderer.DrawMesh(falloff_mesh, TextureGenerator.TextureFromGrayscaleMap(fallOffMap));
+                editorRenderer.DrawCollider(falloff_mesh);
                 break;
             case EditorMode.FLAT_COLORED:
-                editorRenderer.DrawMesh(MeshGenerator.GeneratePlaneMesh(chunkSize, chunkSize), TextureGenerator.TextureFromColorMap(data.textureData, chunkSize, chunkSize));
+                editorRenderer.DrawMesh(plane, TextureGenerator.TextureFromColorMap(data.textureData, chunkSize, chunkSize));
+                editorRenderer.DrawCollider(plane);
                 break;
             case EditorMode.FLAT_HEIGHTMAP:
-                editorRenderer.DrawMesh(MeshGenerator.GeneratePlaneMesh(chunkSize, chunkSize), TextureGenerator.TextureFromGrayscaleMap(data.map));
+                editorRenderer.DrawMesh(plane, TextureGenerator.TextureFromGrayscaleMap(data.map));
+                editorRenderer.DrawCollider(plane);
                 break;
             case EditorMode.FLAT_FALLOFF:
-                editorRenderer.DrawMesh(MeshGenerator.GeneratePlaneMesh(chunkSize, chunkSize), TextureGenerator.TextureFromGrayscaleMap(fallOffMap));
+                editorRenderer.DrawMesh(plane, TextureGenerator.TextureFromGrayscaleMap(fallOffMap));
+                editorRenderer.DrawCollider(plane);
                 break;
         }
     }

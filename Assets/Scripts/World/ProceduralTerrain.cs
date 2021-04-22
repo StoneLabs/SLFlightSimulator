@@ -7,6 +7,11 @@ public class ProceduralTerrain : MonoBehaviour
 {
     public int viewDistance = 16; // View distance in chunks
     public int[] LODDistances = new int[] {4, 6, 8, 10, 12, 14};
+    [Range(0, 6)]
+    public int ColliderLOD = 2;
+    [Range(0, 240)]
+    public float ColliderGenerationRadius = 50;
+
     public Transform viewer;
     public GameObject chunkContainer;
     public MapGenerator generator;
@@ -19,7 +24,7 @@ public class ProceduralTerrain : MonoBehaviour
         get { return MapGenerator.chunkSize - 1; }
     }
 
-    public Vector2Int ViewerChunkPosition
+    public Vector2Int ViewerChunkCoordinate
     {
         get
         {
@@ -28,11 +33,20 @@ public class ProceduralTerrain : MonoBehaviour
                 Mathf.FloorToInt(this.viewer.position.z / ChunkSize));
         }
     }
+    public Vector2 ViewerChunkPosition
+    {
+        get
+        {
+            return new Vector2(
+                this.viewer.position.x / ChunkSize,
+                this.viewer.position.z / ChunkSize);
+        }
+    }
 
     private void Update()
     {
-        for (int chunkX = ViewerChunkPosition.x - viewDistance + 1; chunkX < ViewerChunkPosition.x + viewDistance; chunkX++)
-            for (int chunkY = ViewerChunkPosition.y - viewDistance + 1; chunkY < ViewerChunkPosition.y + viewDistance; chunkY++)
+        for (int chunkX = ViewerChunkCoordinate.x - viewDistance + 1; chunkX < ViewerChunkCoordinate.x + viewDistance; chunkX++)
+            for (int chunkY = ViewerChunkCoordinate.y - viewDistance + 1; chunkY < ViewerChunkCoordinate.y + viewDistance; chunkY++)
             {
                 Vector2Int chunk = new Vector2Int(chunkX, chunkY);
 
@@ -53,6 +67,7 @@ public class ProceduralTerrain : MonoBehaviour
         chunkObject.transform.position = new Vector3((chunkPosition.x + 0.5f) * ChunkSize, 0, (chunkPosition.y + 0.5f) * ChunkSize);
 
         var meshFilter = chunkObject.AddComponent<MeshFilter>();
+        var meshCollider = chunkObject.AddComponent<MeshCollider>();
         var meshRenderer = chunkObject.AddComponent<MeshRenderer>();
         var chunk = chunkObject.AddComponent<TerrainChunk>();
         meshRenderer.sharedMaterial = new Material(terrainMaterial);
@@ -70,12 +85,28 @@ public class ProceduralTerrain : MonoBehaviour
         Destroy(chunk.gameObject);
     }
 
+    public bool IsInRealDistance(TerrainChunk chunk, float distance)
+    {
+        return IsInRealDistance(chunk.chunkCoordinate, distance);
+    }
+    public bool IsInRealDistance(Vector2Int chunkCoordinate, float distance)
+    {
+        Bounds bounds = new Bounds(
+            new Vector3(chunkCoordinate.x + 0.5f, 0, chunkCoordinate.y + 0.5f), 
+            new Vector3(1, 1, 1));
+
+        return bounds.SqrDistance(new Vector3(ViewerChunkPosition.x, 0, ViewerChunkPosition.y)) <= (distance / ChunkSize);
+    }
+    public bool IsInDistance(TerrainChunk chunk, uint distance)
+    {
+        return IsInDistance(chunk.chunkCoordinate, distance);
+    }
     public bool IsInDistance(Vector2Int chunkCoordinate, uint distance)
     {
-        if (chunkCoordinate.x <= ViewerChunkPosition.x - distance || chunkCoordinate.x >= ViewerChunkPosition.x + distance)
+        if (chunkCoordinate.x <= ViewerChunkCoordinate.x - distance || chunkCoordinate.x >= ViewerChunkCoordinate.x + distance)
             return false;
 
-        if (chunkCoordinate.y <= ViewerChunkPosition.y - distance || chunkCoordinate.y >= ViewerChunkPosition.y + distance)
+        if (chunkCoordinate.y <= ViewerChunkCoordinate.y - distance || chunkCoordinate.y >= ViewerChunkCoordinate.y + distance)
             return false;
 
         return true;
@@ -88,7 +119,7 @@ public class ProceduralTerrain : MonoBehaviour
 
     public bool IsInViewDistance(TerrainChunk chunk)
     {
-        return IsInViewDistance(chunk.chunkCoordinate);
+        return IsInDistance(chunk, (uint)viewDistance);
     }
 
     public int LODTarget(TerrainChunk chunk)
@@ -99,5 +130,10 @@ public class ProceduralTerrain : MonoBehaviour
                 return i;
         }
         return 6;
+    }
+
+    public bool NeedsCollider(TerrainChunk chunk)
+    {
+        return IsInRealDistance(chunk, ColliderGenerationRadius);
     }
 }
