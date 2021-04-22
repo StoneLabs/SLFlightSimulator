@@ -12,6 +12,8 @@ public class ProceduralTerrain : MonoBehaviour
     [Range(0, 240)]
     public float ColliderGenerationRadius = 50;
 
+    [Range(1, 100)]
+    public int scale = 1;
     public Transform viewer;
     public GameObject chunkContainer;
     public MapGenerator generator;
@@ -21,7 +23,11 @@ public class ProceduralTerrain : MonoBehaviour
 
     public int ChunkSize
     {
-        get { return MapGenerator.chunkSize - 1; }
+        get { return UnscaledChunkSize * scale; }
+    }
+    public int UnscaledChunkSize
+    {
+        get { return (MapGenerator.chunkSize - 1); }
     }
 
     public Vector2Int ViewerChunkCoordinate
@@ -65,6 +71,7 @@ public class ProceduralTerrain : MonoBehaviour
         // Set position and parent
         chunkObject.transform.SetParent(chunkContainer.transform);
         chunkObject.transform.position = new Vector3((chunkPosition.x + 0.5f) * ChunkSize, 0, (chunkPosition.y + 0.5f) * ChunkSize);
+        chunkObject.transform.localScale *= scale;
 
         var meshFilter = chunkObject.AddComponent<MeshFilter>();
         var meshCollider = chunkObject.AddComponent<MeshCollider>();

@@ -29,17 +29,20 @@ public class MapGenerator : MonoBehaviour
     [Range(0, 6)]
     public int lod; //1, 2, 4, 6, 8, 10 or 12 (saved in range 0-6)
 
-    [Range(0, 100)]
+    [Range(0, 1000)]
     public int heightFactor = 0;
     public AnimationCurve heightCurve;
 
-    [Range(0.0001f, 150)]
+    [Range(0.0001f, 5000)]
     public float noiseScale = 0;
 
+    [Range(1, 12)]
     public uint octaves;
 
     [Range(0, 1)]
     public float persistance;
+
+    [Range(0, 3)]
     public float lacunarity;
 
     public Vector2 offset;
