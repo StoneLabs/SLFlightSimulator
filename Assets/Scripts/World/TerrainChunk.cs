@@ -37,13 +37,12 @@ public class TerrainChunk : MonoBehaviour
             renderer.DrawMesh(data.LODMeshData[LODTarget], TextureGenerator.TextureFromColorMap(data.textureData, MapGenerator.chunkSize, MapGenerator.chunkSize));
         }
 
-        if (!hasCollider && terrain.IsInRealDistance(this, terrain.ColliderGenerationRadius))
+        if (!hasCollider && terrain.NeedsCollider(this))
         {
-            Debug.Log(this.chunkCoordinate);
-
-            hasCollider = true;
             MeshTextureRenderer renderer = GetComponent<MeshTextureRenderer>();
             renderer.DrawCollider(data.LODMeshData[terrain.ColliderLOD]);
+
+            hasCollider = true;
         }
     }
 }
