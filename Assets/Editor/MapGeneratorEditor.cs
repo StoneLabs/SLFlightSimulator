@@ -12,9 +12,7 @@ public class MapGeneratorEditor : Editor
     {
         MapGenerator mapGenerator = (MapGenerator)target;
 
-        if (!mapGenerator.settings.HasSubscriber)
-            mapGenerator.settings.Subscribe(() => { if (autoUpdate) mapGenerator.EditorRender(); });
-
+        mapGenerator.settings.Subscribe(() => { if (autoUpdate) mapGenerator.EditorRender(); });
         if (DrawDefaultInspector() && autoUpdate)
             mapGenerator.EditorRender();
 
