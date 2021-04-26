@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu()]
-public class ProceduralTerrainSettings : ScriptableObject
+public class ProceduralTerrainSettings : SubscribeableSettings
 {
     public int viewDistance = 10; // View distance in chunks
     public int[] LODDistances = new int[] { 4, 99, 99, 6, 99, 8 };

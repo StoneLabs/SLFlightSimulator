@@ -6,10 +6,14 @@ using UnityEditor;
 [CustomEditor(typeof(MapGenerator))]
 public class MapGeneratorEditor : Editor
 {
-    bool autoUpdate = true;
+    public bool autoUpdate = true;
+
     public override void OnInspectorGUI()
     {
         MapGenerator mapGenerator = (MapGenerator)target;
+
+        if (!mapGenerator.settings.HasSubscriber)
+            mapGenerator.settings.Subscribe(() => { if (autoUpdate) mapGenerator.EditorRender(); });
 
         if (DrawDefaultInspector() && autoUpdate)
             mapGenerator.EditorRender();

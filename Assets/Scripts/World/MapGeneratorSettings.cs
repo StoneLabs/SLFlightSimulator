@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu()]
-public class MapGeneratorSettings : ScriptableObject
+public class MapGeneratorSettings : SubscribeableSettings
 {
     [Header("Generator Settings")]
     [Range(0, 6)]
