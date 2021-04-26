@@ -74,12 +74,10 @@ public class MapGenerator : MonoBehaviour
     }
 
     Queue<GeneratorJob> generatorResults = new Queue<GeneratorJob>();
-    private int generatorResultsPending = 0;
     public void GenerateMapDataAsync(Vector2 offset, Action<MapData> callback)
     {
         new Thread(() =>
         {
-            generatorResultsPending++;
             lock (generatorResults)
             {
                 MapData data = GenerateMapData(offset);
@@ -92,7 +90,6 @@ public class MapGenerator : MonoBehaviour
     {
         if (generatorResults.Count > 0)
         {
-            generatorResultsPending--;
             var job = generatorResults.Dequeue();
             job.callback(job.result);
         }
@@ -155,7 +152,7 @@ public class MapGenerator : MonoBehaviour
         {
             String debugInfo = "";
             debugInfo += "World generator debug INFO:\n";
-            debugInfo += $"World generator quque: {this.generatorResultsPending} + {this.generatorResults.Count}\n";
+            debugInfo += $"World generator quque: {this.generatorResults.Count}\n";
 
             GUI.Label(debugPosition, debugInfo);
         }
