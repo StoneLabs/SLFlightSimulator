@@ -25,6 +25,10 @@ public class MapGenerator : MonoBehaviour
     public MeshTextureRenderer editorRenderer;
     public bool editorCreateCollider = false;
 
+    [Header("Debug tools")]
+    public bool debugInfoOnScreen = true;
+    public Rect debugPosition;
+
     [Header("Generator settings")]
     public MapGeneratorSettings settings;
 
@@ -70,10 +74,12 @@ public class MapGenerator : MonoBehaviour
     }
 
     Queue<GeneratorJob> generatorResults = new Queue<GeneratorJob>();
+    private int generatorResultsPending = 0;
     public void GenerateMapDataAsync(Vector2 offset, Action<MapData> callback)
     {
         new Thread(() =>
         {
+            generatorResultsPending++;
             lock (generatorResults)
             {
                 MapData data = GenerateMapData(offset);
@@ -86,6 +92,7 @@ public class MapGenerator : MonoBehaviour
     {
         if (generatorResults.Count > 0)
         {
+            generatorResultsPending--;
             var job = generatorResults.Dequeue();
             job.callback(job.result);
         }
@@ -139,6 +146,18 @@ public class MapGenerator : MonoBehaviour
                 editorRenderer.DrawMesh(plane, TextureGenerator.TextureFromGrayscaleMap(fallOffMap));
                 editorRenderer.DrawCollider(plane);
                 break;
+        }
+    }
+
+    private void OnGUI()
+    {
+        if (debugInfoOnScreen)
+        {
+            String debugInfo = "";
+            debugInfo += "World generator debug INFO:\n";
+            debugInfo += $"World generator quque: {this.generatorResultsPending} + {this.generatorResults.Count}\n";
+
+            GUI.Label(debugPosition, debugInfo);
         }
     }
 }
