@@ -25,38 +25,8 @@ public class MapGenerator : MonoBehaviour
     public MeshTextureRenderer editorRenderer;
     public bool editorCreateCollider = false;
 
-    [Header("Generator Settings")]
-    [Range(0, 6)]
-    public int lod; //1, 2, 4, 6, 8, 10 or 12 (saved in range 0-6)
-
-    [Range(0, 1000)]
-    public int heightFactor = 0;
-    public AnimationCurve heightCurve;
-
-    [Range(0.0001f, 5000)]
-    public float noiseScale = 0;
-
-    [Range(1, 12)]
-    public uint octaves;
-
-    [Range(0, 1)]
-    public float persistance;
-
-    [Range(0, 3)]
-    public float lacunarity;
-
-    public Vector2 offset;
-    public int seed;
-
-    public Gradient regions;
-
-    [Header("Falloff settings")]
-    public bool applyFalloff = true;
-
-    [Range(0, 20)]
-    public float falloffHardness = 0;
-    [Range(0, 20)]
-    public float falloffDistance = 0;
+    [Header("Generator settings")]
+    public MapGeneratorSettings settings;
 
     private float[,] fallOffMap;
 
@@ -80,7 +50,7 @@ public class MapGenerator : MonoBehaviour
 
     private void OnValidate()
     {
-        fallOffMap = NoiseGenerator.GenerateFalloffMap(chunkSize, falloffDistance, falloffHardness);
+        fallOffMap = NoiseGenerator.GenerateFalloffMap(chunkSize, settings.falloffDistance, settings.falloffHardness);
     }
 
     private class GeneratorJob
@@ -125,13 +95,15 @@ public class MapGenerator : MonoBehaviour
     {
         MapData mapData = new MapData();
 
-        mapData.map = NoiseGenerator.GenerateNoisemap(chunkSize, chunkSize, seed, noiseScale, octaves, persistance, lacunarity, mode, offset + localOffset);
-        if (applyFalloff)
+        mapData.map = NoiseGenerator.GenerateNoisemap(chunkSize, chunkSize, settings.seed, settings.noiseScale,
+            settings.octaves, settings.persistance, settings.lacunarity, mode, settings.offset + localOffset);
+
+        if (settings.applyFalloff)
             mapData.map = NoiseGenerator.SubstractMap(mapData.map, fallOffMap);
 
-        mapData.textureData = TextureGenerator.ColorArrayFromGrayscaleMap(mapData.map, regions);
+        mapData.textureData = TextureGenerator.ColorArrayFromGrayscaleMap(mapData.map, settings.regions);
         for (int i = 0; i <= 6; i++)
-            mapData.LODMeshData[i] = MeshGenerator.GenerateTerrainMesh(mapData.map, i, heightFactor, heightCurve);
+            mapData.LODMeshData[i] = MeshGenerator.GenerateTerrainMesh(mapData.map, i, settings.heightFactor, settings.heightCurve);
 
         return mapData;
     }
@@ -139,17 +111,17 @@ public class MapGenerator : MonoBehaviour
     public void EditorRender()
     {
         MapData data = GenerateMapData(Vector2.zero, editorNormalMode);
-        MeshData falloff_mesh = MeshGenerator.GenerateTerrainMesh(fallOffMap, lod, heightFactor, AnimationCurve.Linear(0, 0, 1, 1));
+        MeshData falloff_mesh = MeshGenerator.GenerateTerrainMesh(fallOffMap, settings.lod, settings.heightFactor, AnimationCurve.Linear(0, 0, 1, 1));
         MeshData plane = MeshGenerator.GeneratePlaneMesh(chunkSize, chunkSize);
         switch (editorMode)
         {
             case EditorMode.COLORED:
-                editorRenderer.DrawMesh(data.LODMeshData[lod], TextureGenerator.TextureFromColorMap(data.textureData, chunkSize, chunkSize));
-                editorRenderer.DrawCollider(data.LODMeshData[lod]);
+                editorRenderer.DrawMesh(data.LODMeshData[settings.lod], TextureGenerator.TextureFromColorMap(data.textureData, chunkSize, chunkSize));
+                editorRenderer.DrawCollider(data.LODMeshData[settings.lod]);
                 break;
             case EditorMode.HEIGHTMAP:
-                editorRenderer.DrawMesh(data.LODMeshData[lod], TextureGenerator.TextureFromGrayscaleMap(data.map));
-                editorRenderer.DrawCollider(data.LODMeshData[lod]);
+                editorRenderer.DrawMesh(data.LODMeshData[settings.lod], TextureGenerator.TextureFromGrayscaleMap(data.map));
+                editorRenderer.DrawCollider(data.LODMeshData[settings.lod]);
                 break;
             case EditorMode.FALLOFF:
                 editorRenderer.DrawMesh(falloff_mesh, TextureGenerator.TextureFromGrayscaleMap(fallOffMap));

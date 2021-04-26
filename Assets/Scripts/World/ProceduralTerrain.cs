@@ -5,15 +5,7 @@ using UnityEngine.UIElements;
 
 public class ProceduralTerrain : MonoBehaviour
 {
-    public int viewDistance = 16; // View distance in chunks
-    public int[] LODDistances = new int[] {4, 6, 8, 10, 12, 14};
-    [Range(0, 6)]
-    public int ColliderLOD = 2;
-    [Range(0, 240)]
-    public float ColliderGenerationRadius = 50;
-
-    [Range(1, 100)]
-    public int scale = 1;
+    public ProceduralTerrainSettings settings;
     public Transform viewer;
     public GameObject chunkContainer;
     public MapGenerator generator;
@@ -23,7 +15,7 @@ public class ProceduralTerrain : MonoBehaviour
 
     public int ChunkSize
     {
-        get { return UnscaledChunkSize * scale; }
+        get { return UnscaledChunkSize * settings.scale; }
     }
     public int UnscaledChunkSize
     {
@@ -51,8 +43,8 @@ public class ProceduralTerrain : MonoBehaviour
 
     private void Update()
     {
-        for (int chunkX = ViewerChunkCoordinate.x - viewDistance + 1; chunkX < ViewerChunkCoordinate.x + viewDistance; chunkX++)
-            for (int chunkY = ViewerChunkCoordinate.y - viewDistance + 1; chunkY < ViewerChunkCoordinate.y + viewDistance; chunkY++)
+        for (int chunkX = ViewerChunkCoordinate.x - settings.viewDistance + 1; chunkX < ViewerChunkCoordinate.x + settings.viewDistance; chunkX++)
+            for (int chunkY = ViewerChunkCoordinate.y - settings.viewDistance + 1; chunkY < ViewerChunkCoordinate.y + settings.viewDistance; chunkY++)
             {
                 Vector2Int chunk = new Vector2Int(chunkX, chunkY);
 
@@ -71,7 +63,7 @@ public class ProceduralTerrain : MonoBehaviour
         // Set position and parent
         chunkObject.transform.SetParent(chunkContainer.transform);
         chunkObject.transform.position = new Vector3((chunkPosition.x + 0.5f) * ChunkSize, 0, (chunkPosition.y + 0.5f) * ChunkSize);
-        chunkObject.transform.localScale *= scale;
+        chunkObject.transform.localScale *= settings.scale;
 
         var meshFilter = chunkObject.AddComponent<MeshFilter>();
         var meshCollider = chunkObject.AddComponent<MeshCollider>();
@@ -121,19 +113,19 @@ public class ProceduralTerrain : MonoBehaviour
 
     public bool IsInViewDistance(Vector2Int chunkCoordinate)
     {
-        return IsInDistance(chunkCoordinate, (uint)viewDistance);
+        return IsInDistance(chunkCoordinate, (uint)settings.viewDistance);
     }
 
     public bool IsInViewDistance(TerrainChunk chunk)
     {
-        return IsInDistance(chunk, (uint)viewDistance);
+        return IsInDistance(chunk, (uint)settings.viewDistance);
     }
 
     public int LODTarget(TerrainChunk chunk)
     {
         for (int i = 0; i < 6; i++)
         {
-            if (IsInDistance(chunk.chunkCoordinate, (uint)LODDistances[i]))
+            if (IsInDistance(chunk.chunkCoordinate, (uint)settings.LODDistances[i]))
                 return i;
         }
         return 6;
@@ -141,6 +133,6 @@ public class ProceduralTerrain : MonoBehaviour
 
     public bool NeedsCollider(TerrainChunk chunk)
     {
-        return IsInRealDistance(chunk, ColliderGenerationRadius);
+        return IsInRealDistance(chunk, settings.ColliderGenerationRadius);
     }
 }

@@ -40,7 +40,7 @@ public class TerrainChunk : MonoBehaviour
         if (!hasCollider && terrain.NeedsCollider(this))
         {
             MeshTextureRenderer renderer = GetComponent<MeshTextureRenderer>();
-            renderer.DrawCollider(data.LODMeshData[terrain.ColliderLOD]);
+            renderer.DrawCollider(data.LODMeshData[terrain.settings.ColliderLOD]);
 
             hasCollider = true;
         }

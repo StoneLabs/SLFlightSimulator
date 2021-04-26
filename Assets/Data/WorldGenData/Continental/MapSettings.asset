@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e407908e8ea00f459d4b78b351e137d, type: 3}
+  m_Name: MapSettings
+  m_EditorClassIdentifier: 
+  lod: 0
+  heightFactor: 70
+  heightCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.4
+      value: 0.002105713
+      inSlope: 0.47693446
+      outSlope: 0.47693446
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.47357893
+      value: 0.037198037
+      inSlope: 0.2700821
+      outSlope: 0.2700821
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.10766062
+    - serializedVersion: 3
+      time: 0.7998794
+      value: 0.23969412
+      inSlope: 1.3879867
+      outSlope: 1.3879867
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.91390055
+      value: 0.59788686
+      inSlope: 4.228794
+      outSlope: 4.228794
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.1075611
+      outWeight: 0.20022605
+    - serializedVersion: 3
+      time: 0.99816895
+      value: 1.0021057
+      inSlope: 0.44174588
+      outSlope: 0.44174588
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.41131184
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  noiseScale: 1500
+  octaves: 8
+  persistance: 0.5
+  lacunarity: 2.2
+  offset: {x: 0, y: 0}
+  seed: 8
+  regions:
+    serializedVersion: 2
+    key0: {r: 0.058823507, g: 0.09221449, b: 0.67058825, a: 1}
+    key1: {r: 0.06003024, g: 0.35369328, b: 0.6698113, a: 1}
+    key2: {r: 0.09740568, g: 0.5849056, b: 0.046902817, a: 0}
+    key3: {r: 0.044499815, g: 0.3773585, b: 0.0708566, a: 0}
+    key4: {r: 0.46226418, g: 0.15917587, b: 0.15917587, a: 0}
+    key5: {r: 0.2735849, g: 0.1509879, b: 0.1509879, a: 0}
+    key6: {r: 1, g: 1, b: 1, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 22552
+    ctime1: 26214
+    ctime2: 31611
+    ctime3: 42983
+    ctime4: 50115
+    ctime5: 58982
+    ctime6: 65535
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 7
+    m_NumAlphaKeys: 2
+  applyFalloff: 0
+  falloffHardness: 0
+  falloffDistance: 0
