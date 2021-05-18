@@ -13,8 +13,8 @@ public class SubscribeableSettings : ScriptableObject
 
     public void Subscribe(System.Action action)
     {
-        if (action != null)
-            Debug.LogWarning("Warning SubscriptableSettings listener has been overwritten.");
+        //if (action != null)
+        //    Debug.LogWarning("Warning SubscriptableSettings listener has been overwritten.");
 
         listener = action;
     }
