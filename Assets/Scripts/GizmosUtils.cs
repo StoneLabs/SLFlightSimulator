@@ -8,6 +8,10 @@ public static class GizmosUtils
     {
         Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
     }
+    public static void SetT(Transform transform)
+    {
+        Gizmos.matrix = Matrix4x4.TRS(transform.position, Quaternion.identity, Vector3.one);
+    }
 
     public static void DrawPlane(Vector3 center, Vector2 size, Color? outlineColor = null)
     {
