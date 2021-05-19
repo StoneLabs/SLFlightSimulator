@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MapSettings
   m_EditorClassIdentifier: 
   lod: 0
-  heightFactor: 115
+  heightFactor: 150
   heightCurve:
     serializedVersion: 2
     m_Curve:
