@@ -4,16 +4,14 @@ using UnityEngine;
 
 public class AeroSurface : MonoBehaviour
 {
-    [Range(0, 3)]
-    public float width = 0;
-    [Range(0, 3)]
-    public float height = 0;
+    public enum ControlMode { None, Pitch, Yaw, Roll }
+    public ControlMode controlMode;
 
     public float SurfaceArea
     {
         get
         {
-            return transform.lossyScale.x * width * transform.lossyScale.z * height;
+            return transform.lossyScale.x * transform.lossyScale.z;
         }
     }
 
@@ -29,13 +27,27 @@ public class AeroSurface : MonoBehaviour
         
     }
 
-
+    [Range(0, 2 * Mathf.PI)]
+    public float simulatedThrust;
+    [Range(0, 2*Mathf.PI)]
+    public float simulatedDrag;
     private void OnDrawGizmos()
     {
 #if UNITY_EDITOR
-        Gizmos.color = Color.red;
-        Gizmos.matrix = transform.localToWorldMatrix;
-        Gizmos.DrawCube(Vector3.zero, new Vector3(width, 0.001f, height));
+        if (controlMode == ControlMode.None)
+            Gizmos.color = new Color(0.529f, 0.808f, 0.922f, 0.6f);
+        else
+            Gizmos.color = new Color(0.906f, 0.576f, 0.443f, 0.6f);
+
+        // Width and depth of surface
+        float width = transform.lossyScale.x, depth = transform.lossyScale.z;
+
+        // Rotate Gizmo with object
+        GizmosUtils.SetTR(transform);
+        GizmosUtils.DrawPlane(Vector3.zero, new Vector2(width, depth), Color.black);
+
+        GizmosUtils.DrawArrow(Vector3.zero, Vector3.up, simulatedDrag, Color.red);
+        GizmosUtils.DrawArrow(Vector3.zero, Vector3.back, simulatedThrust, Color.blue);
 #endif
     }
 }

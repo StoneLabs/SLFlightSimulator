@@ -22,7 +22,7 @@ public class AeroSurfaceEditor : Editor
         GUILayout.Space(10);
         EditorGUILayout.LabelField("Editor preview", EditorStyles.boldLabel);
 
-        EditorGUILayout.LabelField($"Area:\t{area}");
+        EditorGUILayout.LabelField($"Area:\t{area}m;");
 
         if (autoUpdate)
             calculatePreview(surface);
