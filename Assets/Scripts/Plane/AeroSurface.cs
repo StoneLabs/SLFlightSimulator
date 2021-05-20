@@ -5,13 +5,12 @@ using UnityEngine;
 
 public class AeroSurface : MonoBehaviour
 {
-    public enum ControlMode { None, Pitch, Yaw, Roll }
-    public ControlMode controlMode;
-    public AnimationCurve CA_Curve;
-    public AnimationCurve CD_Curve;
-    [Range(0, 1.0f)]
-    [Description("More realistic, but can lead to oscillation")]
-    public float RotationWindImpact = 0.1f;
+    public enum VisualizationColor { Static, Controlled }
+
+    [Header("Surface settings")]
+    public AeroProfile profile;
+
+    [Header("Plane/World references")]
     public Rigidbody plane;
     public Environment environment;
 
@@ -19,25 +18,17 @@ public class AeroSurface : MonoBehaviour
     public Vector3 simulatedWind;
 
     [Header("Visualization Settings")]
+    public VisualizationColor controlMode;
     [Range(0, 1e4f)]
     public float GizmosLiftDivisor = 1e3f;
     [Range(0, 1e4f)]
     public float GizmosDragDivisor = 1e3f;
-    public bool useSimulatedWind = false;
-    public bool useRealWindInGame = true;
     [Space(10)]
     public bool showFront = false;
     public bool showWindSpeedFront = false;
     public bool showLocalSpaceCopy = false;
+    public bool showWind = false;
 
-
-    // WindSpeed = -velocity + wind - Vector3.Cross(angularVelocity, relativePosition)
-
-    public void Start()
-    {
-        if (useRealWindInGame)
-            useSimulatedWind = false;
-    }
 
     public Vector3 RelativePosition
     {
@@ -51,10 +42,12 @@ public class AeroSurface : MonoBehaviour
     {
         get
         {
-            if (useSimulatedWind)
-                return simulatedWind;
+            // Optimally:
+            // WindSpeed = -velocity + wind - Vector3.Cross(angularVelocity, relativePosition)
+            if (Application.isPlaying)
+                return -plane.velocity + Vector3.zero - profile.RotationWindImpact * Vector3.Cross(plane.angularVelocity, RelativePosition);
             else
-                return -plane.velocity + Vector3.zero - RotationWindImpact * Vector3.Cross(plane.angularVelocity, RelativePosition);
+                return simulatedWind;
         }
     }
 
@@ -81,7 +74,7 @@ public class AeroSurface : MonoBehaviour
     {
         get
         {
-            float magnitude = 0.5f * environment.CalculateDensity(0) * (WindSpeedFront * WindSpeedFront) * CA_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
+            float magnitude = 0.5f * environment.CalculateDensity(0) * (WindSpeedFront * WindSpeedFront) * profile.CA_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
             return Vector3.Cross(transform.right, Wind).normalized * magnitude;
         }
     }
@@ -90,7 +83,7 @@ public class AeroSurface : MonoBehaviour
     {
         get
         {
-            float magnitude = 0.5f * environment.CalculateDensity(0) * (WindSpeedFront * WindSpeedFront) * CD_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
+            float magnitude = 0.5f * environment.CalculateDensity(0) * (WindSpeedFront * WindSpeedFront) * profile.CD_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
             return Wind.normalized * magnitude;
         }
     }
@@ -106,7 +99,7 @@ public class AeroSurface : MonoBehaviour
     private void OnDrawGizmos()
     {
 #if UNITY_EDITOR
-        if (controlMode == ControlMode.None)
+        if (controlMode == VisualizationColor.Static)
             Gizmos.color = new Color(0.529f, 0.808f, 0.922f, 0.6f);
         else
             Gizmos.color = new Color(0.906f, 0.576f, 0.443f, 0.6f);
@@ -131,7 +124,9 @@ public class AeroSurface : MonoBehaviour
             if (showFront)
                 GizmosUtils.DrawArrow(Vector3.zero, transform.forward, 1, Color.yellow);
 
-            GizmosUtils.DrawArrow(-Wind, Wind, Wind.magnitude, Color.green);
+            if (showWind)
+                GizmosUtils.DrawArrow(-Wind, Wind, Wind.magnitude, Color.green);
+
             if (showWindSpeedFront)
             {
                 GizmosUtils.DrawLine(transform.forward, WindProjection.normalized, Color.grey);
