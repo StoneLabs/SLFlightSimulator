@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
 public class AeroSurface : MonoBehaviour
@@ -8,6 +9,9 @@ public class AeroSurface : MonoBehaviour
     public ControlMode controlMode;
     public AnimationCurve CA_Curve;
     public AnimationCurve CD_Curve;
+    [Range(0, 1.0f)]
+    [Description("More realistic, but can lead to oscillation")]
+    public float RotationWindImpact = 0.1f;
     public Rigidbody plane;
     public Environment environment;
 
@@ -25,6 +29,7 @@ public class AeroSurface : MonoBehaviour
     public bool showFront = false;
     public bool showWindSpeedFront = false;
     public bool showLocalSpaceCopy = false;
+
 
     // WindSpeed = -velocity + wind - Vector3.Cross(angularVelocity, relativePosition)
 
@@ -49,7 +54,7 @@ public class AeroSurface : MonoBehaviour
             if (useSimulatedWind)
                 return simulatedWind;
             else
-                return -plane.velocity + Vector3.zero - Vector3.Cross(plane.angularVelocity, RelativePosition);
+                return -plane.velocity + Vector3.zero - RotationWindImpact * Vector3.Cross(plane.angularVelocity, RelativePosition);
         }
     }
 
