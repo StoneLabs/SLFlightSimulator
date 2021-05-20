@@ -8,6 +8,7 @@ public class AeroSurface : MonoBehaviour
     public ControlMode controlMode;
     public AnimationCurve CA_Curve;
     public AnimationCurve CD_Curve;
+    public Rigidbody plane;
     public Environment environment;
 
     [Header("Simulated Input")]
@@ -19,12 +20,27 @@ public class AeroSurface : MonoBehaviour
     [Range(0, 1e4f)]
     public float GizmosDragDivisor = 1e3f;
     public bool useSimulatedWind = false;
+    public bool useRealWindInGame = true;
     [Space(10)]
     public bool showFront = false;
     public bool showWindSpeedFront = false;
     public bool showLocalSpaceCopy = false;
 
     // WindSpeed = -velocity + wind - Vector3.Cross(angularVelocity, relativePosition)
+
+    public void Start()
+    {
+        if (useRealWindInGame)
+            useSimulatedWind = false;
+    }
+
+    public Vector3 RelativePosition
+    {
+        get 
+        {
+            return transform.position - plane.worldCenterOfMass;
+        }
+    }
 
     public Vector3 Wind
     {
@@ -33,7 +49,7 @@ public class AeroSurface : MonoBehaviour
             if (useSimulatedWind)
                 return simulatedWind;
             else
-                return Vector3.zero;
+                return -plane.velocity + Vector3.zero - Vector3.Cross(plane.angularVelocity, RelativePosition);
         }
     }
 

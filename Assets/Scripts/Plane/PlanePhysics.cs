@@ -15,8 +15,8 @@ public class PlanePhysics : MonoBehaviour
     void FixedUpdate()
     {
         Rigidbody plane = GetComponent<Rigidbody>();
-        plane.AddForce(transform.up * 10000);
-        plane.AddForce(transform.forward * 4000);
+        plane.AddForce(transform.up * 6000);
+        plane.AddForce(transform.forward * 15000);
 
         if (Input.GetKey(KeyCode.A))
         {
