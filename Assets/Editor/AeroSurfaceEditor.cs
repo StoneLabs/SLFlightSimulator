@@ -18,5 +18,8 @@ public class AeroSurfaceEditor : Editor
         EditorGUILayout.LabelField($"Area:\t{surface.SurfaceArea}m");
         EditorGUILayout.LabelField($"Wind:\t{surface.Wind.magnitude}m/s");
         EditorGUILayout.LabelField($"Wind:\t{surface.WindSpeedFront}m/s (applicable) [{surface.WindSpeedFront / surface.Wind.magnitude * 100.0f}%]");
+        GUILayout.Space(10);
+        EditorGUILayout.LabelField($"Lift:\t{surface.LiftForce} [{surface.LiftForce.magnitude}]");
+        EditorGUILayout.LabelField($"Drag:\t{surface.DragForce} [{surface.LiftForce.magnitude}]");
     }
 }

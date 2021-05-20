@@ -7,16 +7,17 @@ public class AeroSurface : MonoBehaviour
     public enum ControlMode { None, Pitch, Yaw, Roll }
     public ControlMode controlMode;
     public AnimationCurve CA_Curve;
+    public AnimationCurve CD_Curve;
     public Environment environment;
 
     [Header("Simulated Input")]
     public Vector3 simulatedWind;
-    [Range(0, 2 * Mathf.PI)]
-    public float simulatedDrag;
 
     [Header("Visualization Settings")]
     [Range(0, 1e4f)]
     public float GizmosLiftDivisor = 1e3f;
+    [Range(0, 1e4f)]
+    public float GizmosDragDivisor = 1e3f;
     public bool useSimulatedWind = false;
     [Space(10)]
     public bool showFront = false;
@@ -55,11 +56,21 @@ public class AeroSurface : MonoBehaviour
         }
     }
 
-    public float LiftForce
+    public Vector3 LiftForce
     {
         get
         {
-            return 0.5f * environment.CalculateDensity(0) * (WindSpeedFront * WindSpeedFront) * CA_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
+            float magnitude = 0.5f * environment.CalculateDensity(0) * (WindSpeedFront * WindSpeedFront) * CA_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
+            return Vector3.Cross(transform.right, Wind).normalized * magnitude;
+        }
+    }
+
+    public Vector3 DragForce
+    {
+        get
+        {
+            float magnitude = 0.5f * environment.CalculateDensity(0) * (WindSpeedFront * WindSpeedFront) * CD_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
+            return Wind.normalized * magnitude;
         }
     }
 
@@ -93,8 +104,8 @@ public class AeroSurface : MonoBehaviour
 
         void renderArrows()
         {
-            GizmosUtils.DrawArrow(Vector3.zero, Wind, simulatedDrag, Color.red);
-            GizmosUtils.DrawArrow(Vector3.zero, Vector3.Cross(transform.right, Wind), LiftForce / GizmosLiftDivisor, Color.blue);
+            GizmosUtils.DrawArrow(Vector3.zero, DragForce, DragForce.magnitude / GizmosDragDivisor, Color.red);
+            GizmosUtils.DrawArrow(Vector3.zero, LiftForce, LiftForce.magnitude / GizmosLiftDivisor, Color.blue);
 
             if (showFront)
                 GizmosUtils.DrawArrow(Vector3.zero, transform.forward, 1, Color.yellow);
