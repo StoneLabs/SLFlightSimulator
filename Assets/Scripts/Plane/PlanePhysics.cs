@@ -13,7 +13,7 @@ public class PlanePhysics : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GetComponent<Rigidbody>().AddForce(Vector3.forward * 100, ForceMode.VelocityChange);
+        GetComponent<Rigidbody>().AddForce(Vector3.forward * 30, ForceMode.VelocityChange);
     }
 
     // Update is called once per frame
@@ -47,10 +47,10 @@ public class PlanePhysics : MonoBehaviour
             backRudder.localRotation = Quaternion.Euler(new Vector3(5, 0, 0));
         if (Input.GetKey(KeyCode.W))
             backRudder.localRotation = Quaternion.Euler(new Vector3(-5, 0, 0));
+    }
 
-        //if (Input.GetKey(KeyCode.W))
-        //    plane.AddForceAtPosition(transform.up * 50, transform.TransformPoint(Vector3.back * 2));
-        //if (Input.GetKey(KeyCode.S))
-        //    plane.AddForceAtPosition(transform.up * -50, transform.TransformPoint(Vector3.back * 2));
+    public void OnGUI()
+    {
+        GUI.Label(new Rect(0, 150, 400, 400), $"Velocity: {GetComponent<Rigidbody>().velocity.magnitude * 3.6}km/h");
     }
 }
