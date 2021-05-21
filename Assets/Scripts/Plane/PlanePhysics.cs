@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlanePhysics : MonoBehaviour
 {
     public List<AeroSurface> surfaces = new List<AeroSurface>();
+    public List<AeroEngine> engines = new List<AeroEngine>();
 
     // Start is called before the first frame update
     void Start()
@@ -18,8 +19,9 @@ public class PlanePhysics : MonoBehaviour
     {
         Rigidbody plane = GetComponent<Rigidbody>();
 
-        //plane.AddForce(transform.up * 6000);
-        plane.AddForce(transform.forward * throttle * 500);
+        foreach (AeroEngine engine in engines)
+            plane.AddForceAtPosition(engine.Thrust, engine.transform.position);
+
         foreach (AeroSurface surface in surfaces)
         {
             plane.AddForceAtPosition(surface.LiftForce, surface.transform.position);

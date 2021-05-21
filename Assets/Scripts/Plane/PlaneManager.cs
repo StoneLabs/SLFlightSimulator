@@ -8,7 +8,11 @@ public class PlaneManager : MonoBehaviour
     public BasicPlaneInput input;
     public ControlSurface[] controlSurfaces;
 
-    float throttle;
+    public float throttle
+    {
+        get;
+        private set;
+    }
     float steeringPitch;
     float steeringYaw;
     float steeringRoll;
