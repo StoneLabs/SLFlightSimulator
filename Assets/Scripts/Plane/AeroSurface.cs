@@ -74,7 +74,7 @@ public class AeroSurface : MonoBehaviour
     {
         get
         {
-            float magnitude = 0.5f * environment.CalculateDensity(0) * (WindSpeedFront * WindSpeedFront) * profile.CA_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
+            float magnitude = 0.5f * environment.CalculateDensity(transform.position.y) * (WindSpeedFront * WindSpeedFront) * profile.CA_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
             return Vector3.Cross(transform.right, Wind).normalized * magnitude;
         }
     }
@@ -83,7 +83,7 @@ public class AeroSurface : MonoBehaviour
     {
         get
         {
-            float magnitude = 0.5f * environment.CalculateDensity(0) * (WindSpeedFront * WindSpeedFront) * profile.CD_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
+            float magnitude = 0.5f * environment.CalculateDensity(transform.position.y) * (WindSpeedFront * WindSpeedFront) * profile.CD_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
             return Wind.normalized * magnitude;
         }
     }
