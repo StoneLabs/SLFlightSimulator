@@ -7,13 +7,24 @@ public class AeroEngine : MonoBehaviour
     public PlaneManager plane;
     public AnimationCurve forceCurve;
     public AnimationCurve fuelConsumptionCurve;
+    [Range(0, 1)]
+    public float fuelStarvePercentage = 0.02f;
     [Range(0, 1e4f)]
     public float GizmosThrustDivider = 50;
 
+    public bool Starved
+    {
+        get
+        {
+            return plane.FuelPercentage < fuelStarvePercentage;
+        }
+    }
     public Vector3 Thrust
     {
         get
         {
+            if (Starved)
+                return transform.forward * 0.0f;
             return transform.forward * forceCurve.Evaluate(plane.throttle);
         }
     }
@@ -21,6 +32,8 @@ public class AeroEngine : MonoBehaviour
     {
         get
         {
+            if (Starved)
+                return 0.0f;
             return fuelConsumptionCurve.Evaluate(plane.throttle);
         }
     }

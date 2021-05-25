@@ -14,7 +14,13 @@ public class PlaneManager : MonoBehaviour
     public float fuelCapacity = 1000;
     public float fuelLevel = 500;
     public float fuelConsumptionMultiplier = 1;
-
+    public float FuelPercentage
+    {
+        get
+        {
+            return Mathf.Clamp01(fuelLevel / fuelCapacity);
+        }
+    }
 
     public float throttle
     {
@@ -63,6 +69,6 @@ public class PlaneManager : MonoBehaviour
         GUI.HorizontalSlider(new Rect(0, y += 20, 200, 40), steeringPitch, -1, 1);
         GUI.HorizontalSlider(new Rect(0, y += 20, 200, 40), steeringRoll, -1, 1);
         GUI.HorizontalSlider(new Rect(0, y += 20, 200, 40), steeringYaw, -1, 1);
-        GUI.HorizontalSlider(new Rect(0, y += 20, 200, 40), fuelLevel/fuelCapacity, -1, 1);
+        GUI.HorizontalSlider(new Rect(0, y += 20, 200, 40), FuelPercentage, 0, 1);
     }
 }
