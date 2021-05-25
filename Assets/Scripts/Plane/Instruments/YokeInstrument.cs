@@ -13,7 +13,7 @@ public class YokeInstrument : Instrument
     // Update is called once per frame
     void Update()
     {
-        mainStick.localRotation = Quaternion.Euler(new Vector3(90 + manager.getSteeringRoll() * mainStickRollMultiplier, -90, -90));
-        mainStick.localPosition = new Vector3(0, 0, manager.getSteeringPitch() * mainStickPitchMultiplier);
+        mainStick.localRotation = Quaternion.Euler(new Vector3(90 + manager.SteeringRoll * mainStickRollMultiplier, -90, -90));
+        mainStick.localPosition = new Vector3(0, 0, manager.SteeringPitch * mainStickPitchMultiplier);
     }
 }

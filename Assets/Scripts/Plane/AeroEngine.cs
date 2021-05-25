@@ -25,7 +25,7 @@ public class AeroEngine : MonoBehaviour
         {
             if (Starved)
                 return transform.forward * 0.0f;
-            return transform.forward * forceCurve.Evaluate(plane.throttle);
+            return transform.forward * forceCurve.Evaluate(plane.Throttle);
         }
     }
     public float FuelConsumption
@@ -34,7 +34,7 @@ public class AeroEngine : MonoBehaviour
         {
             if (Starved)
                 return 0.0f;
-            return fuelConsumptionCurve.Evaluate(plane.throttle);
+            return fuelConsumptionCurve.Evaluate(plane.Throttle);
         }
     }
 

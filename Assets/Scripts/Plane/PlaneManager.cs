@@ -7,8 +7,11 @@ public class PlaneManager : MonoBehaviour
     [Header("Components")]
     public Environment environment;
     public PlanePhysics physics;
-    public BasicPlaneInput input;
     public ControlSurface[] controlSurfaces;
+
+    [Header("Inputs")]
+    public PlaneInput input;
+    public AutoPilot autoPilot;
 
     [Header("Fuel settings")]
     public float fuelCapacity = 40;
@@ -24,25 +27,31 @@ public class PlaneManager : MonoBehaviour
         }
     }
 
-    public float throttle
-    {
-        get;
-        private set;
-    }
-    float steeringPitch;
-    float steeringYaw;
-    float steeringRoll;
+    public float Throttle { get; private set; }
+    public float SteeringPitch { get; private set; }
+    public float SteeringYaw { get; private set; }
+    public float SteeringRoll { get; private set; }
 
 
     [Header("Debug settings")]
     public bool drawDebug = false;
 
     public void Update()
-    { 
-        throttle = input.GetThrottle();
-        steeringPitch = input.GetPitch();
-        steeringRoll = input.GetRoll();
-        steeringYaw = input.GetYaw();
+    {
+        if (IsAutoPilot())
+        {
+            Throttle = autoPilot.GetThrottle();
+            SteeringPitch = autoPilot.GetPitch();
+            SteeringRoll = autoPilot.GetRoll();
+            SteeringYaw = autoPilot.GetYaw();
+        }
+        else
+        {
+            Throttle = input.GetThrottle();
+            SteeringPitch = input.GetPitch();
+            SteeringRoll = input.GetRoll();
+            SteeringYaw = input.GetYaw();
+        }
 
         foreach (AeroEngine engine in physics.engines)
             fuelLevel -= engine.FuelConsumption * Time.deltaTime * fuelConsumptionMultiplier;
@@ -51,7 +60,7 @@ public class PlaneManager : MonoBehaviour
     public void FixedUpdate()
     {
         foreach (ControlSurface surface in controlSurfaces)
-            surface.control(steeringPitch, steeringYaw, steeringRoll);
+            surface.control(SteeringPitch, SteeringYaw, SteeringRoll);
 
         physics.applyPhysics();
     }
@@ -73,24 +82,14 @@ public class PlaneManager : MonoBehaviour
         GUI.Label(new Rect(5, y += 20, 300, 400), $"Pressure: {environment.CalculatePressure(transform.position.y):F2}pascal");
         GUI.Label(new Rect(5, y += 20, 300, 400), $"Density: {environment.CalculateDensity(transform.position.y):F2}kg/m3");
         GUI.Label(new Rect(5, y += 40, 300, 400), $"Throttle, Pitch, Roll, Yaw:");
-        GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), throttle, 0, 1);
-        GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), steeringPitch, -1, 1);
-        GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), steeringRoll, -1, 1);
-        GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), steeringYaw, -1, 1);
+        GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), Throttle, 0, 1);
+        GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringPitch, -1, 1);
+        GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringRoll, -1, 1);
+        GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringYaw, -1, 1);
     }
 
-    public float getSteeringRoll()
+    public bool IsAutoPilot()
     {
-        return steeringRoll;
-    }
-
-    public float getSteeringPitch()
-    {
-        return steeringPitch;
-    }
-
-    public float getSteeringYaw()
-    {
-        return steeringYaw;
+        return input.IsAutoPilot();
     }
 }
