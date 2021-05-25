@@ -74,4 +74,19 @@ public class PlaneManager : MonoBehaviour
         GUI.HorizontalSlider(new Rect(0, y += 20, 200, 40), steeringRoll, -1, 1);
         GUI.HorizontalSlider(new Rect(0, y += 20, 200, 40), steeringYaw, -1, 1);
     }
+
+    public float getSteeringRoll()
+    {
+        return steeringRoll;
+    }
+
+    public float getSteeringPitch()
+    {
+        return steeringPitch;
+    }
+
+    public float getSteeringYaw()
+    {
+        return steeringYaw;
+    }
 }
