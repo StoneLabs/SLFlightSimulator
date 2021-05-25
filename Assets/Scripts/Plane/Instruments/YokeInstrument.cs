@@ -2,19 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class YokeInstrument : MonoBehaviour
+public class YokeInstrument : Instrument
 {
-    public PlaneManager manager;
     public Transform mainStick;
     [Range(0, 90.0f)]
     public float mainStickRollMultiplier = 45.0f;
     [Range(-0.002f, 0.002f)]
     public float mainStickPitchMultiplier = 0.001f;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
 
     // Update is called once per frame
     void Update()
