@@ -5,7 +5,8 @@ using UnityEngine;
 public class AeroEngine : MonoBehaviour
 {
     public PlaneManager plane;
-    public float maxForce = 500;
+    public AnimationCurve forceCurve;
+    public AnimationCurve fuelConsumptionCurve;
     [Range(0, 1e4f)]
     public float GizmosThrustDivider = 50;
 
@@ -13,7 +14,14 @@ public class AeroEngine : MonoBehaviour
     {
         get
         {
-            return transform.forward * plane.throttle * maxForce;
+            return transform.forward * forceCurve.Evaluate(plane.throttle);
+        }
+    }
+    public float FuelConsumption
+    {
+        get
+        {
+            return fuelConsumptionCurve.Evaluate(plane.throttle);
         }
     }
 

@@ -4,10 +4,17 @@ using UnityEngine;
 
 public class PlaneManager : MonoBehaviour
 {
+    [Header("Components")]
     public Environment environment;
     public PlanePhysics physics;
     public BasicPlaneInput input;
     public ControlSurface[] controlSurfaces;
+
+    [Header("Fuel settings")]
+    public float fuelCapacity = 1000;
+    public float fuelLevel = 500;
+    public float fuelConsumptionMultiplier = 1;
+
 
     public float throttle
     {
@@ -18,6 +25,7 @@ public class PlaneManager : MonoBehaviour
     float steeringYaw;
     float steeringRoll;
 
+
     [Header("Debug settings")]
     public bool drawDebug = false;
 
@@ -27,6 +35,9 @@ public class PlaneManager : MonoBehaviour
         steeringPitch = input.GetPitch();
         steeringRoll = input.GetRoll();
         steeringYaw = input.GetYaw();
+
+        foreach (AeroEngine engine in physics.engines)
+            fuelLevel -= engine.FuelConsumption * Time.deltaTime * fuelConsumptionMultiplier;
     }
 
     public void FixedUpdate()
@@ -34,7 +45,7 @@ public class PlaneManager : MonoBehaviour
         foreach (ControlSurface surface in controlSurfaces)
             surface.control(steeringPitch, steeringYaw, steeringRoll);
 
-        physics.applyForces(throttle);
+        physics.applyForces();
     }
 
     public void OnGUI()
@@ -52,5 +63,6 @@ public class PlaneManager : MonoBehaviour
         GUI.HorizontalSlider(new Rect(0, y += 20, 200, 40), steeringPitch, -1, 1);
         GUI.HorizontalSlider(new Rect(0, y += 20, 200, 40), steeringRoll, -1, 1);
         GUI.HorizontalSlider(new Rect(0, y += 20, 200, 40), steeringYaw, -1, 1);
+        GUI.HorizontalSlider(new Rect(0, y += 20, 200, 40), fuelLevel/fuelCapacity, -1, 1);
     }
 }

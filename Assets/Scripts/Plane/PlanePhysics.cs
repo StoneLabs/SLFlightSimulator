@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlanePhysics : MonoBehaviour
 {
+    public Rigidbody planeBody;
     public List<AeroSurface> surfaces = new List<AeroSurface>();
     public List<AeroEngine> engines = new List<AeroEngine>();
 
@@ -15,17 +16,15 @@ public class PlanePhysics : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void applyForces(float throttle)
+    public void applyForces()
     {
-        Rigidbody plane = GetComponent<Rigidbody>();
-
         foreach (AeroEngine engine in engines)
-            plane.AddForceAtPosition(engine.Thrust, engine.transform.position);
+            planeBody.AddForceAtPosition(engine.Thrust, engine.transform.position);
 
         foreach (AeroSurface surface in surfaces)
         {
-            plane.AddForceAtPosition(surface.LiftForce, surface.transform.position);
-            plane.AddForceAtPosition(surface.DragForce, surface.transform.position);
+            planeBody.AddForceAtPosition(surface.LiftForce, surface.transform.position);
+            planeBody.AddForceAtPosition(surface.DragForce, surface.transform.position);
         }
     }
 }
