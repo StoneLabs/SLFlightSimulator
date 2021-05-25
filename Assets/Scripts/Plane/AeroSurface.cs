@@ -11,8 +11,7 @@ public class AeroSurface : MonoBehaviour
     public AeroProfile profile;
 
     [Header("Plane/World references")]
-    public Rigidbody plane;
-    public Environment environment;
+    public PlaneManager manager;
 
     [Header("Simulated Input")]
     public Vector3 simulatedWind;
@@ -34,7 +33,7 @@ public class AeroSurface : MonoBehaviour
     {
         get 
         {
-            return transform.position - plane.worldCenterOfMass;
+            return transform.position - manager.physics.body.worldCenterOfMass;
         }
     }
 
@@ -45,7 +44,7 @@ public class AeroSurface : MonoBehaviour
             // Optimally:
             // WindSpeed = -velocity + wind - Vector3.Cross(angularVelocity, relativePosition)
             if (Application.isPlaying)
-                return -plane.velocity + Vector3.zero - profile.RotationWindImpact * Vector3.Cross(plane.angularVelocity, RelativePosition);
+                return -manager.physics.body.velocity + Vector3.zero - profile.RotationWindImpact * Vector3.Cross(manager.physics.body.angularVelocity, RelativePosition);
             else
                 return simulatedWind;
         }
@@ -74,7 +73,7 @@ public class AeroSurface : MonoBehaviour
     {
         get
         {
-            float magnitude = 0.5f * environment.CalculateDensity(transform.position.y) * (WindSpeedFront * WindSpeedFront) * profile.CA_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
+            float magnitude = 0.5f * manager.environment.CalculateDensity(transform.position.y) * (WindSpeedFront * WindSpeedFront) * profile.CA_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
             return Vector3.Cross(transform.right, Wind).normalized * magnitude;
         }
     }
@@ -83,7 +82,7 @@ public class AeroSurface : MonoBehaviour
     {
         get
         {
-            float magnitude = 0.5f * environment.CalculateDensity(transform.position.y) * (WindSpeedFront * WindSpeedFront) * profile.CD_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
+            float magnitude = 0.5f * manager.environment.CalculateDensity(transform.position.y) * (WindSpeedFront * WindSpeedFront) * profile.CD_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
             return Wind.normalized * magnitude;
         }
     }
