@@ -86,10 +86,10 @@ public class Environment : MonoBehaviour
         if (!IsWind)
             return Vector3.zero;
 
-        float windX     = NoiseGenerator.GlobalUnclampedPerlin(position.x, position.y, windMapSeed + 0, windMapScale, windMapOctaves, windMapPersistance, windMapLacunarity, windOffset);
-        float windY     = NoiseGenerator.GlobalUnclampedPerlin(position.x, position.y, windMapSeed + 1, windMapScale, windMapOctaves, windMapPersistance, windMapLacunarity, windOffset) * windVerticalFactor;
-        float windZ     = NoiseGenerator.GlobalUnclampedPerlin(position.x, position.y, windMapSeed + 2, windMapScale, windMapOctaves, windMapPersistance, windMapLacunarity, windOffset);
-        float magnitude = NoiseGenerator.GlobalUnclampedPerlin(position.x, position.y, windMapSeed + 3, windMapScale, windMapOctaves, windMapPersistance, windMapLacunarity, windOffset);
+        float windX     = NoiseGenerator.GlobalUnclampedPerlin(position.x, position.z, windMapSeed + 0, windMapScale, windMapOctaves, windMapPersistance, windMapLacunarity, windOffset);
+        float windY     = NoiseGenerator.GlobalUnclampedPerlin(position.x, position.z, windMapSeed + 1, windMapScale, windMapOctaves, windMapPersistance, windMapLacunarity, windOffset) * windVerticalFactor;
+        float windZ     = NoiseGenerator.GlobalUnclampedPerlin(position.x, position.z, windMapSeed + 2, windMapScale, windMapOctaves, windMapPersistance, windMapLacunarity, windOffset);
+        float magnitude = NoiseGenerator.GlobalUnclampedPerlin(position.x, position.z, windMapSeed + 3, windMapScale, windMapOctaves, windMapPersistance, windMapLacunarity, windOffset);
 
         return new Vector3(windX, windY, windZ).normalized * magnitude * windMagnitude;
     }
