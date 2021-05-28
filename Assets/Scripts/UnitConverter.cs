@@ -10,4 +10,8 @@ public static class UnitConverter
     {
         return meter / 0.3048f;
     }
+    public static float MeterPerSecond2Knots(float meter)
+    {
+        return meter * (900.0f/463.0f);
+    }
 }
