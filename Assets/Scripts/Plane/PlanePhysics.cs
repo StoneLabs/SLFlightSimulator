@@ -19,7 +19,7 @@ public class PlanePhysics : MonoBehaviour
     {
         get
         {
-            return body.velocity + manager.environment.CalculateWind(body.position);
+            return body.velocity - manager.environment.CalculateWind(body.position);
         }
     }
 
