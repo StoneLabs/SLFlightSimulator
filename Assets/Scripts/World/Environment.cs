@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Environment : MonoBehaviour
 {
     [Header("Wind Settings")]
+    public bool randomizeSeedOnStart = true;
     public int windMapSeed = 1;
     public float windMapScale = 150.0f;
     public uint windMapOctaves = 4;
@@ -63,6 +62,16 @@ public class Environment : MonoBehaviour
         }
 
         return retVal ?? throw new Exception("Illegal state in subscript getter");
+    }
+
+
+    private void Start()
+    {
+        if (randomizeSeedOnStart)
+        {
+            UnityEngine.Random random = new UnityEngine.Random();
+            windMapSeed = (int)(UnityEngine.Random.value * int.MaxValue);
+        }
     }
 
     public bool IsWind { get; private set; } = true;

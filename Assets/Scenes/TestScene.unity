@@ -1188,6 +1188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b519a7a747615b4db6bdd7d5eec0e26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  randomizeSeedOnStart: 0
   windMapSeed: 1
   windMapScale: 1500
   windMapOctaves: 8
