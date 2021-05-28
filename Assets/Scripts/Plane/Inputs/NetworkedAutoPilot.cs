@@ -69,7 +69,7 @@ public class NetworkedAutoPilot : AutoPilot
 
         addData(plane.transform.position);
         addData(plane.transform.rotation.eulerAngles);
-        addData(plane.physics.body.velocity.magnitude);
+        addData(plane.physics.AirSpeed.magnitude);
         addData(plane.physics.DryMass);
         addData(plane.fuelCapacity);
         addData(plane.fuelLevel);

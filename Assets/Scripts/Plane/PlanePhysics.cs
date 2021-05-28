@@ -15,6 +15,13 @@ public class PlanePhysics : MonoBehaviour
         get;
         private set;
     }
+    public Vector3 AirSpeed
+    {
+        get
+        {
+            return body.velocity + manager.environment.CalculateWind(body.position);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()

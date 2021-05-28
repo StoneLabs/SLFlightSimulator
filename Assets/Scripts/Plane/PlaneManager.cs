@@ -32,7 +32,6 @@ public class PlaneManager : MonoBehaviour
     public float SteeringYaw { get; private set; }
     public float SteeringRoll { get; private set; }
 
-
     [Header("Debug settings")]
     public bool drawDebug = false;
 
@@ -70,11 +69,12 @@ public class PlaneManager : MonoBehaviour
         if (!drawDebug)
             return;
 
-        GUI.Box(new Rect(0, 150, 310, 340), "");
+        GUI.Box(new Rect(0, 150, 310, 360), "");
         int y = 150;
         GUI.Label(new Rect(5, y, 300, 400), "PLANE DEBUG INFORMATION");
         GUI.Label(new Rect(5, y += 40, 300, 400), $"World Position ({transform.position.x / 1000:F2}, {transform.position.z / 1000:F2})km");
-        GUI.Label(new Rect(5, y += 20, 300, 400), $"Velocity: {GetComponent<Rigidbody>().velocity.magnitude * 3.6f:F2}km/h");
+        GUI.Label(new Rect(5, y += 20, 300, 400), $"Velocity: {GetComponent<Rigidbody>().velocity.magnitude * 3.6f:F2}km/h (Wind: {environment.CalculateWind(physics.body.position).magnitude * 3.6f:F2}km/h)");
+        GUI.Label(new Rect(5, y += 20, 300, 400), $"Airspeed: {physics.AirSpeed.magnitude * 3.6f:F2}km/h");
         GUI.Label(new Rect(5, y += 20, 300, 400), $"Altitude: {transform.position.y:F2}m ASL");
         GUI.Label(new Rect(5, y += 20, 300, 400), $"Plane Mass: {physics.body.mass:F2}kg ({physics.DryMass:F2}kg Dry)");
         GUI.Label(new Rect(5, y += 20, 300, 400), $"Fuel level: {fuelLevel:F1}L / {fuelCapacity:F1}L ({FuelPercentage*100.0f:F2}%)");
