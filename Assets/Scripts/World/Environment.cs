@@ -68,7 +68,7 @@ public class Environment : MonoBehaviour
     Vector2 windOffset = new Vector2(0, 0);
     private void FixedUpdate()
     {
-        windOffset += new Vector2(windMapTranslationSpeed, windMapTranslationSpeed) * Time.deltaTime;
+        windOffset += new Vector2(windMapTranslationSpeed, windMapTranslationSpeed) * Time.fixedDeltaTime;
     }
 
     public Vector3 CalculateWind(Vector3 position)
