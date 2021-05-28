@@ -181,9 +181,8 @@ GameObject:
   - component: {fileID: 108648385}
   - component: {fileID: 108648384}
   - component: {fileID: 108648383}
-  - component: {fileID: 108648382}
-  - component: {fileID: 108648386}
   - component: {fileID: 108648387}
+  - component: {fileID: 108648388}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -191,23 +190,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &108648382
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 108648381}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a358c645c65b5e45abb1029cf0b4137, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  acceleration: 25
-  sprintFactor: 10
-  damping: 5
-  rotationSensivity: 1
-  focusOnEnable: 1
 --- !u!81 &108648383
 AudioListener:
   m_ObjectHideFlags: 0
@@ -273,19 +255,6 @@ Transform:
   m_Father: {fileID: 1978167970}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 24.809002, y: 0, z: 0}
---- !u!114 &108648386
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 108648381}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53b658d9a3fc9064fb7a6974b02a55d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movement: {x: 0, y: 0, z: 10}
 --- !u!45 &108648387
 Skybox:
   m_ObjectHideFlags: 0
@@ -295,6 +264,27 @@ Skybox:
   m_GameObject: {fileID: 108648381}
   m_Enabled: 1
   m_CustomSkybox: {fileID: 2100000, guid: ef857b22b9a53d3429fe41086a2e9969, type: 2}
+--- !u!114 &108648388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 108648381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c15af79eec4b2c847a3ba4f32382609e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startDistanceAutomatic: 1
+  startDistance: 15
+  xSpeed: 1
+  ySpeed: 1
+  yLowerLimit: -20
+  yUpperLimit: 80
+  distanceMin: 0.5
+  distanceMax: 15
+  smoothing: 2
 --- !u!1 &181114332
 GameObject:
   m_ObjectHideFlags: 0
