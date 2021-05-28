@@ -86,6 +86,46 @@ public static class NoiseGenerator
         return noiseMap;
     }
 
+    public static float GlobalUnclampedPerlin(float x, float y, int seed, float scale, uint octaves, float persistance, float lacunarity, Vector2 offset)
+    {
+        if (scale <= 0)
+            throw new ArgumentException("Illegal scale supplied to Noisemap generator");
+
+        if (octaves <= 0)
+            throw new ArgumentException("Illegal number of octaves supplied to Noisemap generator");
+
+        // System random from seed
+        System.Random random = new System.Random(seed);
+        Vector2[] seedOffsets = new Vector2[octaves];
+
+        // Generate random offsets for each octave
+        for (int octave = 0; octave < octaves; octave++)
+            seedOffsets[octave] = new Vector2(random.Next((int)-1e6, (int)1e6), random.Next((int)-1e6, (int)1e6));
+
+
+        float value = 0.0f;
+        {
+            float frequency = 1;
+            float amplitude = 1;
+
+            for (int octave = 0; octave < octaves; octave++)
+            {
+                float perlinX = (x + offset.x / 2 + seedOffsets[octave].x) / scale * frequency;
+                float perlinY = (y - offset.y / 2 + seedOffsets[octave].y) / scale * frequency;
+
+                value += amplitude * (Mathf.PerlinNoise(perlinX, perlinY) * 2 - 1);
+
+                // Update frequency, amplitude for next iteration so that
+                //  frequency = lacunarity^octave
+                //  amplitude = persistance^octave
+                frequency *= lacunarity;
+                amplitude *= persistance;
+            }
+        }
+
+        return value;
+    }
+
     public static float[,] GenerateFalloffMap(int size, float fallOffDistance, float falloffHardness)
     {
         float[,] map = new float[size, size];

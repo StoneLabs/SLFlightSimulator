@@ -24,6 +24,7 @@ public class EnvironmentEditor : Editor
         Environment environment = (Environment)target;
         bool defaultChange = DrawDefaultInspector();
 
+        EditorGUILayout.Space();
         EditorGUILayout.LabelField("Editor preview", EditorStyles.boldLabel);
 
         float old_altitude = altitude;

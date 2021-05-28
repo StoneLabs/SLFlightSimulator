@@ -27,6 +27,7 @@ public class AeroSurface : MonoBehaviour
     public bool showWindSpeedFront = false;
     public bool showLocalSpaceCopy = false;
     public bool showWind = false;
+    public bool showWorldWind = true;
 
 
     public Vector3 RelativePosition
@@ -44,7 +45,8 @@ public class AeroSurface : MonoBehaviour
             // Optimally:
             // WindSpeed = -velocity + wind - Vector3.Cross(angularVelocity, relativePosition)
             if (Application.isPlaying)
-                return -manager.physics.body.velocity + Vector3.zero - profile.RotationWindImpact * Vector3.Cross(manager.physics.body.angularVelocity, RelativePosition);
+                return -manager.physics.body.velocity + manager.environment.CalculateWind(transform.position)
+                    - profile.RotationWindImpact * Vector3.Cross(manager.physics.body.angularVelocity, RelativePosition);
             else
                 return simulatedWind;
         }
@@ -119,6 +121,9 @@ public class AeroSurface : MonoBehaviour
         {
             GizmosUtils.DrawArrow(Vector3.zero, DragForce, DragForce.magnitude / GizmosDragDivisor, Color.red);
             GizmosUtils.DrawArrow(Vector3.zero, LiftForce, LiftForce.magnitude / GizmosLiftDivisor, Color.blue);
+
+            if (showWorldWind)
+                GizmosUtils.DrawArrow(Vector3.zero, manager.environment.CalculateWind(transform.position), manager.environment.CalculateWind(transform.position).magnitude, Color.cyan);
 
             if (showFront)
                 GizmosUtils.DrawArrow(Vector3.zero, transform.forward, 1, Color.yellow);

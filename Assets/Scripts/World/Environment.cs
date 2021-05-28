@@ -5,6 +5,17 @@ using UnityEngine;
 
 public class Environment : MonoBehaviour
 {
+    [Header("Wind Settings")]
+    public int windMapSeed = 1;
+    public float windMapScale = 150.0f;
+    public uint windMapOctaves = 4;
+    public float windMapLacunarity = 2.0f;
+    public float windMapPersistance = 0.5f;
+    public float windVerticalFactor = 0.25f;
+    public float windMapTranslationSpeed = 10.0f;
+    public float windMagnitude = 1.0f;
+
+
     private const float GRAVITATIONAL_ACCELERATION = 9.80665f;
     private const float GAS_CONSTANT = 8.3144598f;
     private const float MOLAR_MASS_AIR = 0.0289644f;
@@ -52,6 +63,22 @@ public class Environment : MonoBehaviour
         }
 
         return retVal ?? throw new Exception("Illegal state in subscript getter");
+    }
+
+    Vector2 windOffset = new Vector2(0, 0);
+    private void FixedUpdate()
+    {
+        windOffset += new Vector2(windMapTranslationSpeed, windMapTranslationSpeed) * Time.deltaTime;
+    }
+
+    public Vector3 CalculateWind(Vector3 position)
+    {
+        float windX     = NoiseGenerator.GlobalUnclampedPerlin(position.x, position.y, windMapSeed + 0, windMapScale, windMapOctaves, windMapPersistance, windMapLacunarity, windOffset);
+        float windY     = NoiseGenerator.GlobalUnclampedPerlin(position.x, position.y, windMapSeed + 1, windMapScale, windMapOctaves, windMapPersistance, windMapLacunarity, windOffset) * windVerticalFactor;
+        float windZ     = NoiseGenerator.GlobalUnclampedPerlin(position.x, position.y, windMapSeed + 2, windMapScale, windMapOctaves, windMapPersistance, windMapLacunarity, windOffset);
+        float magnitude = NoiseGenerator.GlobalUnclampedPerlin(position.x, position.y, windMapSeed + 3, windMapScale, windMapOctaves, windMapPersistance, windMapLacunarity, windOffset);
+
+        return new Vector3(windX, windY, windZ).normalized * magnitude * windMagnitude;
     }
 
     public float CalculateTemperature(float altitude)
