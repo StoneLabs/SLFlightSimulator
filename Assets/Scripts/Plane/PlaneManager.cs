@@ -51,6 +51,8 @@ public class PlaneManager : MonoBehaviour
             SteeringRoll = input.GetRoll();
             SteeringYaw = input.GetYaw();
         }
+        if (Input.GetKeyDown("o"))
+            environment.ToggleWind();
 
         foreach (AeroEngine engine in physics.engines)
             fuelLevel -= engine.FuelConsumption * Time.deltaTime * fuelConsumptionMultiplier;
@@ -58,6 +60,9 @@ public class PlaneManager : MonoBehaviour
 
     public void FixedUpdate()
     {
+        if (Input.GetKey("r"))
+            physics.Respawn();
+
         foreach (ControlSurface surface in controlSurfaces)
             surface.control(SteeringPitch, SteeringYaw, SteeringRoll);
 
@@ -73,7 +78,10 @@ public class PlaneManager : MonoBehaviour
         int y = 150;
         GUI.Label(new Rect(5, y, 300, 400), "PLANE DEBUG INFORMATION");
         GUI.Label(new Rect(5, y += 40, 300, 400), $"World Position ({transform.position.x / 1000:F2}, {transform.position.z / 1000:F2})km");
-        GUI.Label(new Rect(5, y += 20, 300, 400), $"Velocity: {GetComponent<Rigidbody>().velocity.magnitude * 3.6f:F2}km/h (Wind: {environment.CalculateWind(physics.body.position).magnitude * 3.6f:F2}km/h)");
+        if (environment.IsWind)
+            GUI.Label(new Rect(5, y += 20, 300, 400), $"Velocity: {GetComponent<Rigidbody>().velocity.magnitude * 3.6f:F2}km/h (Wind: {environment.CalculateWind(physics.body.position).magnitude * 3.6f:F2}km/h)");
+        else 
+            GUI.Label(new Rect(5, y += 20, 300, 400), $"Velocity: {GetComponent<Rigidbody>().velocity.magnitude * 3.6f:F2}km/h (Wind: OFF)");
         GUI.Label(new Rect(5, y += 20, 300, 400), $"Airspeed: {physics.AirSpeed.magnitude * 3.6f:F2}km/h");
         GUI.Label(new Rect(5, y += 20, 300, 400), $"Altitude: {transform.position.y:F2}m ASL");
         GUI.Label(new Rect(5, y += 20, 300, 400), $"Plane Mass: {physics.body.mass:F2}kg ({physics.DryMass:F2}kg Dry)");

@@ -23,11 +23,26 @@ public class PlanePhysics : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
+    private Vector3 spawnPosition;
+    private Quaternion spawnRotation;
+    private float spawnFuel;
     void Start()
     {
         GetComponent<Rigidbody>().AddForce(Vector3.forward * 30, ForceMode.VelocityChange);
         DryMass = body.mass;
+        spawnPosition = transform.position;
+        spawnRotation = transform.rotation;
+        spawnFuel = manager.fuelLevel;
+    }
+
+    public void Respawn()
+    {
+        manager.fuelLevel = spawnFuel;
+        body.MovePosition(spawnPosition);
+        body.MoveRotation(spawnRotation);
+        body.velocity = Vector3.zero;
+        body.angularVelocity = Vector3.zero;
+        GetComponent<Rigidbody>().AddForce(Vector3.forward * 30, ForceMode.VelocityChange);
     }
 
     // Update is called once per frame
