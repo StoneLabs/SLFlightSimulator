@@ -51,6 +51,11 @@ public class PlaneManager : MonoBehaviour
             SteeringRoll = input.GetRoll();
             SteeringYaw = input.GetYaw();
         }
+        Throttle = Mathf.Clamp01(Throttle);
+        SteeringPitch = Mathf.Clamp(SteeringPitch, -1, 1);
+        SteeringRoll = Mathf.Clamp(SteeringRoll, -1, 1);
+        SteeringYaw = Mathf.Clamp(SteeringYaw, -1, 1);
+
         if (Input.GetKeyDown("o"))
             environment.ToggleWind();
 
