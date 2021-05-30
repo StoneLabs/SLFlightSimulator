@@ -6791,19 +6791,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 800
-      outSlope: 800
+      time: 1400
+      value: 100
+      inSlope: 0.22580644
+      outSlope: 0.22580644
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1
+      time: 4500
       value: 800
-      inSlope: 800
-      outSlope: 800
+      inSlope: 0.22580644
+      outSlope: 0.22580644
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -6811,27 +6811,31 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  idleRPM: 1400
+  maxRPM: 4500
+  spinUpSpeedFactor: 1
+  spinDownSpeedFactor: 0.25
   fuelConsumptionCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0.0166
-      outSlope: 0.0166
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.0166
-      inSlope: 0.0166
-      outSlope: 0.0166
+      time: 1400
+      value: 0.05
+      inSlope: 0.0003064516
+      outSlope: 0.0003064516
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 4500
+      value: 1
+      inSlope: 0.0003064516
+      outSlope: 0.0003064516
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4

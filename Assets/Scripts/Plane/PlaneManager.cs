@@ -79,7 +79,7 @@ public class PlaneManager : MonoBehaviour
         if (!drawDebug)
             return;
 
-        GUI.Box(new Rect(0, 150, 310, 360), "");
+        GUI.Box(new Rect(0, 150, 310, 400), "");
         int y = 150;
         GUI.Label(new Rect(5, y, 300, 400), "PLANE DEBUG INFORMATION");
         GUI.Label(new Rect(5, y += 40, 300, 400), $"World Position ({transform.position.x / 1000:F2}, {transform.position.z / 1000:F2})km");
@@ -99,6 +99,7 @@ public class PlaneManager : MonoBehaviour
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringPitch, -1, 1);
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringRoll, -1, 1);
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringYaw, -1, 1);
+        GUI.Label(new Rect(5, y += 40, 300, 400), $"Engine 1 RPM: {physics.engines[0].RPM:F0} ({physics.engines[0].TargetRPM:F0})");
     }
 
     public bool IsAutoPilot()
