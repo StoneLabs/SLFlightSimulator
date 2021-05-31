@@ -22,6 +22,16 @@ public class PlanePhysics : MonoBehaviour
             return body.velocity - manager.environment.CalculateWind(body.position);
         }
     }
+    public float Heading
+    {
+        get
+        {
+            float angleNorth = Vector3.SignedAngle(Vector3.forward, Vector3.ProjectOnPlane(transform.forward, Vector3.up), Vector3.up);
+            if (angleNorth < 0)
+                angleNorth = (angleNorth + 90.0f) + 270.0f;
+            return angleNorth;
+        }
+    }
 
     private Vector3 spawnPosition;
     private Quaternion spawnRotation;
