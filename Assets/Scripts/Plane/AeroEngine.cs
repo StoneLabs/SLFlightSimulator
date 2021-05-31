@@ -22,6 +22,10 @@ public class AeroEngine : MonoBehaviour
     [Range(0, 1)]
     public float fuelStarvePercentage = 0.02f;
 
+    [Header("Propeller")]
+    public Transform propellerBone;
+    public Vector3 propellerBoneFactor = new Vector3(0.01f, 0, 0);
+
     [Header("Visualization")]
     [Range(0, 1e4f)]
     public float GizmosThrustDivider = 50;
@@ -72,6 +76,8 @@ public class AeroEngine : MonoBehaviour
             RPM = Mathf.Lerp(RPM, TargetRPM, spinUpSpeedFactor * Time.deltaTime);
         else
             RPM = Mathf.Lerp(RPM, TargetRPM, spinDownSpeedFactor * Time.deltaTime);
+
+        propellerBone.Rotate(propellerBoneFactor * RPM * Time.deltaTime);
     }
 
 
