@@ -17,7 +17,7 @@ public class AeroEngine : MonoBehaviour
     public float spinDownSpeedFactor = 0.5f;
 
     [Header("Fuel")]
-    [Description("Fuel Consumption in Liter/Minute")]
+    [Tooltip("Fuel Consumption in Liter/Minute")]
     public AnimationCurve fuelConsumptionCurve;
     [Range(0, 1)]
     public float fuelStarvePercentage = 0.02f;
