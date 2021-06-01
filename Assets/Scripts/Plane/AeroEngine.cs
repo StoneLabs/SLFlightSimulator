@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Media;
 using UnityEngine;
 
 public class AeroEngine : MonoBehaviour
@@ -25,6 +26,10 @@ public class AeroEngine : MonoBehaviour
     [Header("Propeller")]
     public Transform propellerBone;
     public Vector3 propellerBoneFactor = new Vector3(0.01f, 0, 0);
+
+    [Header("Sound")]
+    public AudioSource soundSource;
+    public AnimationCurve soundPitch;
 
     [Header("Visualization")]
     [Range(0, 1e4f)]
@@ -76,6 +81,8 @@ public class AeroEngine : MonoBehaviour
             RPM = Mathf.Lerp(RPM, TargetRPM, spinUpSpeedFactor * Time.deltaTime);
         else
             RPM = Mathf.Lerp(RPM, TargetRPM, spinDownSpeedFactor * Time.deltaTime);
+
+        soundSource.pitch = soundPitch.Evaluate(RPM);
 
         propellerBone.Rotate(propellerBoneFactor * RPM * Time.deltaTime);
     }
