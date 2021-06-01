@@ -119,7 +119,7 @@ public class PlaneManager : MonoBehaviour
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringYaw, -1, 1);
         GUI.Label(new Rect(5, y += 40, 300, 400), $"Engine 1 RPM: {physics.engines[0].RPM:F0} ({physics.engines[0].TargetRPM:F0})");
 
-        GUI.Box(new Rect(Screen.width - 185, 150, 310, 225), "");
+        GUI.Box(new Rect(Screen.width - 185, 150, 185, 245), "");
         GUI.Label(new Rect(Screen.width - 180, y = 150, 300, 400), $"CONTROLS");
         GUI.Label(new Rect(Screen.width - 180, y += 40, 300, 400), $"Shift/Ctrl - Throttle");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"W/S - Pitch");
@@ -129,6 +129,7 @@ public class PlaneManager : MonoBehaviour
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"R - Reset plane");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"O - Toggle wind");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"L - Toggle Aerobatic smoke");
+        GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"M - Toggle audio");
     }
 
     public bool IsAutoPilot()
