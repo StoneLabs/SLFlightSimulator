@@ -27,6 +27,11 @@ public class PlaneManager : MonoBehaviour
         }
     }
 
+    [Header("Aerobatic Smoke")]
+    public TrailRenderer[] aerobaticEmitters;
+    public bool AerobaticSmokeStart = false;
+    public bool AerobaticSmoke { get; private set; } = false;
+
     public float Throttle { get; private set; }
     public float SteeringPitch { get; private set; }
     public float SteeringYaw { get; private set; }
@@ -34,6 +39,12 @@ public class PlaneManager : MonoBehaviour
 
     [Header("Debug settings")]
     public bool drawDebug = false;
+
+    public void Start()
+    {
+        AerobaticSmoke = AerobaticSmokeStart;
+        SetSmokeEmmiters();
+    }
 
     public void Update()
     {
@@ -58,6 +69,12 @@ public class PlaneManager : MonoBehaviour
 
         if (Input.GetKeyDown("o"))
             environment.ToggleWind();
+
+        if (Input.GetKeyDown("l"))
+        {
+            AerobaticSmoke = !AerobaticSmoke;
+            SetSmokeEmmiters();
+        }
 
         foreach (AeroEngine engine in physics.engines)
             fuelLevel -= engine.FuelConsumption * Time.deltaTime * fuelConsumptionMultiplier;
@@ -106,5 +123,11 @@ public class PlaneManager : MonoBehaviour
     public bool IsAutoPilot()
     {
         return input.IsAutoPilot();
+    }
+
+    private void SetSmokeEmmiters()
+    {
+        foreach (TrailRenderer renderer in aerobaticEmitters)
+            renderer.emitting = AerobaticSmoke;
     }
 }
