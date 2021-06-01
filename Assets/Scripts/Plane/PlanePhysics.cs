@@ -84,7 +84,7 @@ public class PlanePhysics : MonoBehaviour
     {
 #if UNITY_EDITOR
         GizmosUtils.SetT(transform);
-        GizmosUtils.DrawArrow(Vector3.zero, GForce, GForce.magnitude, Color.white);
+        GizmosUtils.DrawArrow(Vector3.zero, GForce, GForce.magnitude, Color.magenta);
 #endif
     }
 }
