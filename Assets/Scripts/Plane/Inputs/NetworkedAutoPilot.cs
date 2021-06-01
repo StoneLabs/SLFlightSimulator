@@ -35,20 +35,19 @@ public class NetworkedAutoPilot : AutoPilot
                 var receivedResults = await server.ReceiveAsync();
                 String data = Encoding.ASCII.GetString(receivedResults.Buffer);
 
-                var segments = data.Split('|');
-                try
+                if (receivedResults.Buffer.Length != 4 * sizeof(float))
                 {
-                    this.throttle = float.Parse(segments[0]);
-                    this.pitch = float.Parse(segments[1]);
-                    this.roll = float.Parse(segments[2]);
-                    this.yaw = float.Parse(segments[3]);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogWarning("Invalid autopilot command received!");
-                    return;
+                    Debug.LogError("AutoPilot Input is not of length 4*float!");
+                    continue;
                 }
 
+                float[] floats = new float[4];
+                Buffer.BlockCopy(receivedResults.Buffer, 0, floats, 0, 4 * sizeof(float));
+
+                this.throttle = floats[0];
+                this.pitch = floats[1];
+                this.roll = floats[2];
+                this.yaw = floats[3];
 
             }
         });
@@ -61,25 +60,28 @@ public class NetworkedAutoPilot : AutoPilot
         client.Connect(endpoint);
 
 
-        String data = "";
-        void addData(object _data)
+        float[] data =
         {
-            data += _data.ToString() + "|";
-        }
+            plane.transform.position.x,
+            plane.transform.position.y,
+            plane.transform.position.z,
+            plane.transform.rotation.eulerAngles.x,
+            plane.transform.rotation.eulerAngles.y,
+            plane.transform.rotation.eulerAngles.z,
+            plane.physics.AirSpeed.magnitude,
+            plane.physics.GForce.magnitude,
+            plane.physics.DryMass,
+            plane.fuelCapacity,
+            plane.fuelLevel,
+            plane.fuelWeight,
+            plane.environment.CalculatePressure(plane.physics.body.position.y),
+            plane.environment.CalculateDensity(plane.physics.body.position.y),
+            plane.environment.CalculateTemperature(plane.physics.body.position.y),
+        };
 
-        addData(plane.transform.position);
-        addData(plane.transform.rotation.eulerAngles);
-        addData(plane.physics.AirSpeed.magnitude);
-        addData(plane.physics.GForce.magnitude);
-        addData(plane.physics.DryMass);
-        addData(plane.fuelCapacity);
-        addData(plane.fuelLevel);
-        addData(plane.fuelWeight);
-        addData(plane.environment.CalculatePressure(plane.transform.position.y));
-        addData(plane.environment.CalculateDensity(plane.transform.position.y));
-        addData(plane.environment.CalculateTemperature(plane.transform.position.y));
+        byte[] bytes = new byte[data.Length * 4];
+        Buffer.BlockCopy(data, 0, bytes, 0, data.Length * 4);
 
-        byte[] bytes = Encoding.ASCII.GetBytes(data); 
         client.Send(bytes, bytes.Length);
     }
 
