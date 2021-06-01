@@ -87,7 +87,7 @@ public class PlaneManager : MonoBehaviour
             GUI.Label(new Rect(5, y += 20, 300, 400), $"Velocity: {GetComponent<Rigidbody>().velocity.magnitude * 3.6f:F2}km/h (Wind: {environment.CalculateWind(physics.body.position).magnitude * 3.6f:F2}km/h)");
         else 
             GUI.Label(new Rect(5, y += 20, 300, 400), $"Velocity: {GetComponent<Rigidbody>().velocity.magnitude * 3.6f:F2}km/h (Wind: OFF)");
-        GUI.Label(new Rect(5, y += 20, 300, 400), $"Airspeed: {physics.AirSpeed.magnitude * 3.6f:F2}km/h");
+        GUI.Label(new Rect(5, y += 20, 300, 400), $"Airspeed: {physics.AirSpeed.magnitude * 3.6f:F2}km/h ({physics.GForce.magnitude:F1}g)");
         GUI.Label(new Rect(5, y += 20, 300, 400), $"Altitude: {transform.position.y:F2}m ASL");
         GUI.Label(new Rect(5, y += 20, 300, 400), $"Heading: {physics.Heading:F1}*");
         GUI.Label(new Rect(5, y += 20, 300, 400), $"Plane Mass: {physics.body.mass:F2}kg ({physics.DryMass:F2}kg Dry)");

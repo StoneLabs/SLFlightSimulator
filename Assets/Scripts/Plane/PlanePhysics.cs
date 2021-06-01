@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
@@ -32,6 +33,8 @@ public class PlanePhysics : MonoBehaviour
             return angleNorth;
         }
     }
+    public Vector3 GForce { get; private set; }
+    
 
     private Vector3 spawnPosition;
     private Quaternion spawnRotation;
@@ -43,6 +46,13 @@ public class PlanePhysics : MonoBehaviour
         spawnPosition = transform.position;
         spawnRotation = transform.rotation;
         spawnFuel = manager.fuelLevel;
+    }
+
+    private Vector3 lastFrameVelocity;
+    private void FixedUpdate()
+    {
+        GForce = ((lastFrameVelocity - body.velocity) / (Time.fixedDeltaTime) + Physics.gravity) / Physics.gravity.magnitude;
+        lastFrameVelocity = body.velocity;
     }
 
     public void Respawn()
@@ -68,5 +78,13 @@ public class PlanePhysics : MonoBehaviour
             body.AddForceAtPosition(surface.LiftForce, surface.transform.position);
             body.AddForceAtPosition(surface.DragForce, surface.transform.position);
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+#if UNITY_EDITOR
+        GizmosUtils.SetT(transform);
+        GizmosUtils.DrawArrow(Vector3.zero, GForce, GForce.magnitude, Color.white);
+#endif
     }
 }
