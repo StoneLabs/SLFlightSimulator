@@ -8,13 +8,13 @@ public class AeroEngine : MonoBehaviour
     public PlaneManager plane;
 
     [Header("Performance")]
-    public AnimationCurve forceCurve;
+    [Tooltip("Engine Torque per RPM")]
+    public AnimationCurve enginePower;
+    [Range(0.0f, 1.0f)]
+    public float minThrottle = 0.2f;
 
-    public float idleRPM = 1400f;
-    public float maxRPM = 4500f;
+    public float RPM { get; private set; }
 
-    public float spinUpSpeedFactor = 1f;
-    public float spinDownSpeedFactor = 0.5f;
 
     [Header("Fuel")]
     [Tooltip("Fuel Consumption in Liter/Minute")]
@@ -23,40 +23,17 @@ public class AeroEngine : MonoBehaviour
     public float fuelStarvePercentage = 0.02f;
 
     [Header("Propeller")]
-    public Transform propellerBone;
-    public Vector3 propellerBoneFactor = new Vector3(0.01f, 0, 0);
+    public AeroPropeller propeller;
 
     [Header("Sound")]
     public AudioSource soundSource;
     public AnimationCurve soundPitch;
 
-    [Header("Visualization")]
-    [Range(0, 1e4f)]
-    public float GizmosThrustDivider = 50;
-
-    public float RPM { get; private set; }
-
-    public float TargetRPM
-    {
-        get
-        {
-            return plane.Throttle * (maxRPM - idleRPM) + idleRPM;
-        }
-    }
     public bool Starved
     {
         get
         {
             return plane.FuelPercentage < fuelStarvePercentage;
-        }
-    }
-    public Vector3 Thrust
-    {
-        get
-        {
-            if (Starved)
-                return transform.forward * 0.0f;
-            return transform.forward * plane.environment.CalculateDensity(propellerBone.position.y) * forceCurve.Evaluate(RPM);
         }
     }
     public float FuelConsumption
@@ -65,33 +42,38 @@ public class AeroEngine : MonoBehaviour
         {
             if (Starved)
                 return 0.0f;
-            return fuelConsumptionCurve.Evaluate(RPM) / 60.0f;
+
+            return fuelConsumptionCurve.Evaluate(plane.Throttle) / 60.0f;
+        }
+    }
+    public float EnginePower
+    {
+        get
+        {
+            return enginePower.Evaluate(RPM) * (plane.Throttle * (1.0f - minThrottle) + minThrottle);
         }
     }
 
-    private void Start()
+    public Vector3 Thrust
     {
-        RPM = idleRPM;
+        get
+        {
+            return propeller.Thrust;
+        }
+    }
+    public Transform ThrustLocation
+    {
+        get
+        {
+            return propeller.ThrustLocation;
+        }
     }
 
     void Update()
     {
-        if (TargetRPM >= RPM)
-            RPM = Mathf.Lerp(RPM, TargetRPM, spinUpSpeedFactor * Time.deltaTime);
-        else
-            RPM = Mathf.Lerp(RPM, TargetRPM, spinDownSpeedFactor * Time.deltaTime);
+        soundSource.pitch = soundPitch.Evaluate(plane.Throttle);
 
-        soundSource.pitch = soundPitch.Evaluate(RPM);
-
-        propellerBone.Rotate(propellerBoneFactor * RPM * Time.deltaTime);
-    }
-
-
-    private void OnDrawGizmos()
-    {
-#if UNITY_EDITOR
-        GizmosUtils.SetT(transform);
-        GizmosUtils.DrawArrow(Vector3.zero, transform.forward, Thrust.magnitude / GizmosThrustDivider, Color.white);
-#endif
+        float RPMAcceleration = (EnginePower - propeller.CounterTorque) * propeller.AngularDrag;
+        this.RPM += RPMAcceleration * Time.deltaTime;
     }
 }

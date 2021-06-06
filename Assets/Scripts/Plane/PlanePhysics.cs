@@ -71,7 +71,7 @@ public class PlanePhysics : MonoBehaviour
         body.mass = DryMass + manager.fuelLevel * manager.fuelWeight;
 
         foreach (AeroEngine engine in engines)
-            body.AddForceAtPosition(engine.Thrust, engine.transform.position);
+            body.AddForceAtPosition(engine.Thrust, engine.ThrustLocation.position);
 
         foreach (AeroSurface surface in surfaces)
         {

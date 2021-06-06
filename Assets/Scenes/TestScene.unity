@@ -6429,6 +6429,36 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 68.802, y: -304.068, z: -95.08401}
+--- !u!1 &1052327368
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1052327369}
+  m_Layer: 0
+  m_Name: ThrustLocation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1052327369
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1052327368}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 2.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1940449496}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1146140170
 GameObject:
   m_ObjectHideFlags: 0
@@ -7566,6 +7596,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1940449496}
   - component: {fileID: 1940449497}
+  - component: {fileID: 1940449498}
   m_Layer: 0
   m_Name: Engine
   m_TagString: Untagged
@@ -7581,10 +7612,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1940449495}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 2.171}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1653070391}
+  - {fileID: 1052327369}
   m_Father: {fileID: 1978167970}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7601,34 +7633,58 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   plane: {fileID: 1978167973}
-  forceCurve:
+  enginePower:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 500
-      value: 100
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
+      time: 0
+      value: 215
+      inSlope: -0.023181846
+      outSlope: -0.023181846
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 753.6169
+      value: 197.52977
+      inSlope: 0.03684552
+      outSlope: 0.03684552
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.08685723
+    - serializedVersion: 3
+      time: 2675.1592
+      value: 220.07997
+      inSlope: -0.13181134
+      outSlope: -0.13181134
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.0710224
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 3403.139
+      value: 81.7781
+      inSlope: -0.3117829
+      outSlope: -0.3117829
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 2700
-      value: 683
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
+      time: 3500
+      value: 0
+      inSlope: -0.8442823
+      outSlope: -0.8442823
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  idleRPM: 500
-  maxRPM: 2700
-  spinUpSpeedFactor: 1
-  spinDownSpeedFactor: 0.25
+  minThrottle: 0.2
   fuelConsumptionCurve:
     serializedVersion: 2
     m_Curve:
@@ -7654,8 +7710,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   fuelStarvePercentage: 0.02
-  propellerBone: {fileID: 2147377520}
-  propellerBoneFactor: {x: 0, y: 1, z: 0}
+  propeller: {fileID: 1940449498}
   soundSource: {fileID: 1653070392}
   soundPitch:
     serializedVersion: 2
@@ -7681,6 +7736,26 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1940449498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1940449495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a2c0d60d1bc6e94ea04e5a8c1ecdb95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  engine: {fileID: 1940449497}
+  ThrustLocation: {fileID: 1052327369}
+  PropellerLength: 1
+  AngularDrag: 1
+  CD: 1
+  CT: 2
+  propellerBone: {fileID: 0}
+  propellerBoneFactor: {x: 0.01, y: 0, z: 0}
   GizmosThrustDivider: 50
 --- !u!1 &1978167967
 GameObject:
@@ -7755,7 +7830,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1978167967}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.164149, y: 500, z: -1.4269867}
+  m_LocalPosition: {x: 2.164149, y: 20000, z: -1.4269867}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1633953037}

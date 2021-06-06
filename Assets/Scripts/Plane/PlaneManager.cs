@@ -117,7 +117,7 @@ public class PlaneManager : MonoBehaviour
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringPitch, -1, 1);
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringRoll, -1, 1);
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringYaw, -1, 1);
-        GUI.Label(new Rect(5, y += 40, 300, 400), $"Engine 1 RPM: {physics.engines[0].RPM:F0} ({physics.engines[0].TargetRPM:F0})");
+        GUI.Label(new Rect(5, y += 40, 300, 400), $"Engine 1 RPM: {physics.engines[0].RPM:F0}");
 
         GUI.Box(new Rect(Screen.width - 185, 150, 185, 245), "");
         GUI.Label(new Rect(Screen.width - 180, y = 150, 300, 400), $"CONTROLS");
