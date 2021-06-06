@@ -95,6 +95,8 @@ public class AeroEngine : MonoBehaviour
     void Update()
     {
         soundSource.pitch = soundPitch.Evaluate(plane.Throttle);
+        if (Starved || engineDead)
+            soundSource.mute = true;
 
         float RPMAcceleration = (EnginePower - (propeller.CounterTorque / gearRatio)) / propeller.AngularDrag;
         this.RPM += RPMAcceleration * Time.deltaTime;
