@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Media;
 using UnityEngine;
 
 public class AeroEngine : MonoBehaviour
@@ -57,7 +56,7 @@ public class AeroEngine : MonoBehaviour
         {
             if (Starved)
                 return transform.forward * 0.0f;
-            return transform.forward * forceCurve.Evaluate(RPM);
+            return transform.forward * plane.environment.CalculateDensity(propellerBone.position.y) * forceCurve.Evaluate(RPM);
         }
     }
     public float FuelConsumption
