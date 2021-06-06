@@ -29,8 +29,8 @@ public class AeroEngine : MonoBehaviour
 
 
     [Header("Fuel")]
-    [Tooltip("Fuel Consumption in Liter/Minute")]
-    public AnimationCurve fuelConsumptionCurve;
+    [Tooltip("Fuel Consumption in Liter/Minute per (100 EnginePower)")]
+    public float fuelConsumption = 2;
     [Range(0, 1)]
     public float fuelStarvePercentage = 0.02f;
 
@@ -59,7 +59,7 @@ public class AeroEngine : MonoBehaviour
             if (Starved || engineDead)
                 return 0.0f;
 
-            return fuelConsumptionCurve.Evaluate(plane.Throttle) / 60.0f;
+            return fuelConsumption * (EnginePower / 100.0f) / 60.0f;
         }
     }
     public float EnginePower

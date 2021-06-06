@@ -7767,39 +7767,7 @@ MonoBehaviour:
   minThrottle: 0.2
   minRPMDead: 250
   maxRPMDead: 3300
-  fuelConsumptionCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 500
-      value: 0.05
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1960.6458
-      value: 0.94601816
-      inSlope: 0.00009814877
-      outSlope: 0.00009814877
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 2700
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  fuelConsumption: 2
   fuelStarvePercentage: 0.02
   propeller: {fileID: 1052327370}
   soundSource: {fileID: 1653070392}
