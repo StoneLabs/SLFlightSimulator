@@ -19,6 +19,12 @@ public class AeroEngine : MonoBehaviour
     [Range(0.0f, 1.0f)]
     public float minThrottle = 0.2f;
 
+    [Range(0.0f, 5000f)]
+    public float minRPMDead = 250;
+    [Range(0.0f, 5000f)]
+    public float maxRPMDead = 3300;
+    private bool engineDead = false;
+
     public float RPM { get; private set; }
 
 
@@ -46,7 +52,7 @@ public class AeroEngine : MonoBehaviour
     {
         get
         {
-            if (Starved)
+            if (Starved || engineDead)
                 return 0.0f;
 
             return fuelConsumptionCurve.Evaluate(plane.Throttle) / 60.0f;
@@ -56,6 +62,9 @@ public class AeroEngine : MonoBehaviour
     {
         get
         {
+            if (Starved || engineDead)
+                return 0.0f;
+
             return 
                 enginePower.Evaluate(RPM) * 
                 (plane.Throttle * (1.0f - minThrottle) + minThrottle) *
@@ -89,5 +98,20 @@ public class AeroEngine : MonoBehaviour
 
         float RPMAcceleration = (EnginePower - (propeller.CounterTorque / gearRatio)) / propeller.AngularDrag;
         this.RPM += RPMAcceleration * Time.deltaTime;
+
+        if (RPM < minRPMDead || RPM > maxRPMDead)
+            engineDead = true;
+    }
+
+    void EngineBox(int id) 
+    { 
+        GUI.Label(new Rect(5, 20, 220, 20), id == 0 ? "Engine died due to over/under RPM!" : "Out of fuel!"); 
+    }
+    private void OnGUI()
+    {
+        if (Starved)
+            GUI.Window(1, new Rect((Screen.width / 2) - (230 / 2), 50, 230, 50), EngineBox, "ENGINE DIED!");
+        if (engineDead)
+            GUI.Window(0, new Rect((Screen.width / 2) - (230 / 2), 50, 230, 50), EngineBox, "ENGINE DIED!");
     }
 }
