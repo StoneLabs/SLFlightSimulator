@@ -3,7 +3,6 @@
 public class AeroPropeller : MonoBehaviour
 {
     public AeroEngine engine;
-    public Transform ThrustLocation;
 
     [Header("Performance")]
     public float PropellerLength = 1.0f;
@@ -23,7 +22,7 @@ public class AeroPropeller : MonoBehaviour
     {
         get
         {
-            return engine.RPM / 60.0f;
+            return (engine.RPM / engine.gearRatio) / 60.0f;
         }
     }
 
@@ -35,11 +34,19 @@ public class AeroPropeller : MonoBehaviour
         }
     }
 
+    public float DiskArea
+    {
+        get
+        {
+            return PropellerLength * PropellerLength * Mathf.PI;
+        }
+    }
+
     public Vector3 Thrust
     { 
         get
         {
-            float magnitude = engine.plane.environment.CalculateDensity(transform.position.y) * VelocityTip * CT;
+            float magnitude = engine.plane.environment.CalculateDensity(transform.position.y) * VelocityTip * VelocityTip * CT * DiskArea;
             return transform.forward * magnitude;
         }
     }
@@ -48,16 +55,16 @@ public class AeroPropeller : MonoBehaviour
     {
         get
         {
-            return engine.plane.environment.CalculateDensity(transform.position.y) * VelocityTip * CD;
+            return engine.plane.environment.CalculateDensity(transform.position.y) * VelocityTip * VelocityTip * PropellerLength * CD;
         }
     }
 
     private void OnDrawGizmos()
     {
 #if UNITY_EDITOR
-        GizmosUtils.SetT(ThrustLocation);
+        GizmosUtils.SetT(transform);
         GizmosUtils.DrawArrow(Vector3.zero, Thrust, Thrust.magnitude / GizmosThrustDivider, Color.white);
-        GizmosUtils.SetTR(ThrustLocation);
+        GizmosUtils.SetTR(transform);
         GizmosUtils.DrawArrow(Vector3.zero, Vector3.right, PropellerLength, Color.white);
         GizmosUtils.DrawArrow(Vector3.zero, Vector3.left, PropellerLength, Color.white);
         GizmosUtils.DrawArrow(Vector3.zero, Vector3.up, PropellerLength, Color.white);

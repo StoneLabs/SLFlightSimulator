@@ -10,6 +10,12 @@ public class AeroEngine : MonoBehaviour
     [Header("Performance")]
     [Tooltip("Engine Torque per RPM")]
     public AnimationCurve enginePower;
+    [Tooltip("Engine:Propeller Ratio in X:1")]
+    public float gearRatio = 3.0f;
+
+    [Tooltip("Engine Power multiplicator per air pressure")]
+    public AnimationCurve enginePowerDensityFactor;
+
     [Range(0.0f, 1.0f)]
     public float minThrottle = 0.2f;
 
@@ -50,7 +56,10 @@ public class AeroEngine : MonoBehaviour
     {
         get
         {
-            return enginePower.Evaluate(RPM) * (plane.Throttle * (1.0f - minThrottle) + minThrottle);
+            return 
+                enginePower.Evaluate(RPM) * 
+                (plane.Throttle * (1.0f - minThrottle) + minThrottle) *
+                enginePowerDensityFactor.Evaluate(plane.environment.CalculateDensity(ThrustLocation.position.y));
         }
     }
 
@@ -65,15 +74,20 @@ public class AeroEngine : MonoBehaviour
     {
         get
         {
-            return propeller.ThrustLocation;
+            return propeller.transform;
         }
+    }
+
+    private void Start()
+    {
+        RPM = 1000;
     }
 
     void Update()
     {
         soundSource.pitch = soundPitch.Evaluate(plane.Throttle);
 
-        float RPMAcceleration = (EnginePower - propeller.CounterTorque) * propeller.AngularDrag;
+        float RPMAcceleration = (EnginePower - (propeller.CounterTorque / gearRatio)) / propeller.AngularDrag;
         this.RPM += RPMAcceleration * Time.deltaTime;
     }
 }
