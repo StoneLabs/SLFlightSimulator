@@ -6477,8 +6477,8 @@ MonoBehaviour:
   AngularDrag: 0.25
   CD: 0.4
   CT: 1.1
-  propellerBone: {fileID: 0}
-  propellerBoneFactor: {x: 0.01, y: 0, z: 0}
+  propellerBone: {fileID: 2147377520}
+  propellerBoneAxis: {x: 1, y: 0, z: 0}
   GizmosThrustDivider: 50
 --- !u!1 &1146140170
 GameObject:

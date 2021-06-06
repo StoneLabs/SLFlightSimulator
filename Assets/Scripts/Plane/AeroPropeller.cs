@@ -12,11 +12,17 @@ public class AeroPropeller : MonoBehaviour
 
     [Header("Visualization (3D)")]
     public Transform propellerBone;
-    public Vector3 propellerBoneFactor = new Vector3(0.01f, 0, 0);
 
     [Header("Visualization (Debug)")]
     [Range(0, 1e4f)]
     public float GizmosThrustDivider = 50;
+
+
+
+    private void Update()
+    {
+        propellerBone.Rotate(Vector3.up, RPS * 360.0f * Time.deltaTime, Space.Self);
+    }
 
     public float RPS
     {
