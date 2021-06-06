@@ -7808,7 +7808,7 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 500
-      value: 0.19423077
+      value: 0.25
       inSlope: 0
       outSlope: 0
       tangentMode: 136
@@ -7816,8 +7816,50 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 2700
+      time: 3000
       value: 2.2
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  soundVolumeMultiplier:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.013644952
+      outSlope: 0.013644952
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.057297193
+    - serializedVersion: 3
+      time: 76.28605
+      value: 0.43083307
+      inSlope: 0.0016679852
+      outSlope: 0.0016679852
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.10686772
+    - serializedVersion: 3
+      time: 461.16562
+      value: 0.7421585
+      inSlope: 0.00021693174
+      outSlope: 0.00021693174
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 2700
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 136

@@ -39,7 +39,11 @@ public class AeroEngine : MonoBehaviour
 
     [Header("Sound")]
     public AudioSource soundSource;
+    [Tooltip("per RPM")]
     public AnimationCurve soundPitch;
+    [Tooltip("per RPM")]
+    public AnimationCurve soundVolumeMultiplier;
+    private float soundVolumeBase;
 
     public bool Starved
     {
@@ -90,13 +94,20 @@ public class AeroEngine : MonoBehaviour
     private void Start()
     {
         RPM = 1000;
+        soundVolumeBase = soundSource.volume;
+    }
+
+    public void Respawn()
+    {
+        engineDead = false;
+        if (RPM < minRPMDead)
+            RPM = 1000;
     }
 
     void Update()
     {
-        soundSource.pitch = soundPitch.Evaluate(plane.Throttle);
-        if (Starved || engineDead)
-            soundSource.mute = true;
+        soundSource.pitch = soundPitch.Evaluate(RPM);
+        soundSource.volume = soundVolumeBase * soundVolumeMultiplier.Evaluate(RPM);
 
         float RPMAcceleration = (EnginePower - (propeller.CounterTorque / gearRatio)) / propeller.AngularDrag;
         this.RPM += RPMAcceleration * Time.deltaTime;

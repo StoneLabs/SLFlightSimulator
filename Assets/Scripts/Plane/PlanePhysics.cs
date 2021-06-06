@@ -63,6 +63,9 @@ public class PlanePhysics : MonoBehaviour
         body.velocity = Vector3.zero;
         body.angularVelocity = Vector3.zero;
         GetComponent<Rigidbody>().AddForce(Vector3.forward * 30, ForceMode.VelocityChange);
+
+        foreach (AeroEngine engine in engines)
+            engine.Respawn();
     }
 
     // Update is called once per frame
