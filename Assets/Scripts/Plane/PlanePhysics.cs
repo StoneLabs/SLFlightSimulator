@@ -62,7 +62,7 @@ public class PlanePhysics : MonoBehaviour
         body.MoveRotation(spawnRotation);
         body.velocity = Vector3.zero;
         body.angularVelocity = Vector3.zero;
-        GetComponent<Rigidbody>().AddForce(Vector3.forward * 30, ForceMode.VelocityChange);
+        GetComponent<Rigidbody>().AddForce(transform.forward * 30, ForceMode.VelocityChange);
 
         foreach (AeroEngine engine in engines)
             engine.Respawn();
