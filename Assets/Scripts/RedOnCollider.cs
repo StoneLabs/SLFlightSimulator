@@ -6,7 +6,9 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class RedOnCollider : MonoBehaviour
 {
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
     Renderer renderer;
+#pragma warning restore CS0108 // Member hides inherited member; missing new keyword
     public Color OnCollision;
     public Color OnFree;
 

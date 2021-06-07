@@ -6,10 +6,13 @@ using UnityEngine;
 public class BasicPlaneInput : PlaneInput
 {
     bool autoPilotEngaged = false;
+    bool breakesEngaged = false;
     private void Update()
     {
         if (Input.GetKeyDown("t"))
             autoPilotEngaged = !autoPilotEngaged;
+        if (Input.GetKeyDown("b"))
+            breakesEngaged = !breakesEngaged;
     }
 
     public override float GetThrottle()
@@ -27,6 +30,10 @@ public class BasicPlaneInput : PlaneInput
     public override float GetRoll()
     {
         return Input.GetAxis("Horizontal");
+    }
+    public override bool GetBreak()
+    {
+        return breakesEngaged;
     }
     public override bool IsAutoPilot()
     {

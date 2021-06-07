@@ -41,7 +41,7 @@ public class PlanePhysics : MonoBehaviour
     private float spawnFuel;
     void Start()
     {
-        GetComponent<Rigidbody>().AddForce(Vector3.forward * 30, ForceMode.VelocityChange);
+        GetComponent<Rigidbody>().AddForce(transform.forward * 30, ForceMode.VelocityChange);
         DryMass = body.mass;
         spawnPosition = transform.position;
         spawnRotation = transform.rotation;

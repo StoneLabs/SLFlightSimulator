@@ -11,5 +11,6 @@ public abstract class PlaneInput : MonoBehaviour
     public abstract float GetPitch();
     public abstract float GetYaw();
     public abstract float GetRoll();
+    public abstract bool GetBreak();
     public abstract bool IsAutoPilot();
 }

@@ -36,12 +36,22 @@ public class PlaneManager : MonoBehaviour
     public float SteeringPitch { get; private set; }
     public float SteeringYaw { get; private set; }
     public float SteeringRoll { get; private set; }
+    public bool WheelBreaks { get; private set; }
+
+    [Header("Wheels")]
+    public PhysicMaterial WheelMaterial;
+    public float WheelBrakeMultiplier = 10;
+    public float wheelBrakeBaseDynamicFriction = 0.01f;
+    public float wheelBrakeBaseStaticFriction = 0.02f;
 
     [Header("Debug settings")]
     public bool drawDebug = false;
 
     public void Start()
     {
+        WheelMaterial.dynamicFriction = wheelBrakeBaseDynamicFriction;
+        WheelMaterial.staticFriction = wheelBrakeBaseStaticFriction;
+
         AerobaticSmoke = AerobaticSmokeStart;
         SetSmokeEmmiters();
     }
@@ -54,6 +64,7 @@ public class PlaneManager : MonoBehaviour
             SteeringPitch = autoPilot.GetPitch();
             SteeringRoll = autoPilot.GetRoll();
             SteeringYaw = autoPilot.GetYaw();
+            WheelBreaks = false;
         }
         else
         {
@@ -61,11 +72,15 @@ public class PlaneManager : MonoBehaviour
             SteeringPitch = input.GetPitch();
             SteeringRoll = input.GetRoll();
             SteeringYaw = input.GetYaw();
+            WheelBreaks = input.GetBreak();
         }
         Throttle = Mathf.Clamp01(Throttle);
         SteeringPitch = Mathf.Clamp(SteeringPitch, -1, 1);
         SteeringRoll = Mathf.Clamp(SteeringRoll, -1, 1);
         SteeringYaw = Mathf.Clamp(SteeringYaw, -1, 1);
+
+        WheelMaterial.dynamicFriction = wheelBrakeBaseDynamicFriction * (WheelBreaks ? WheelBrakeMultiplier : 1);
+        WheelMaterial.staticFriction = wheelBrakeBaseStaticFriction * (WheelBreaks ? WheelBrakeMultiplier : 1);
 
         if (Input.GetKeyDown("o"))
             environment.ToggleWind();
@@ -96,7 +111,7 @@ public class PlaneManager : MonoBehaviour
         if (!drawDebug)
             return;
 
-        GUI.Box(new Rect(0, 150, 310, 420), "");
+        GUI.Box(new Rect(0, 150, 310, 440), "");
         int y = 150;
         GUI.Label(new Rect(5, y, 300, 400), "PLANE DEBUG INFORMATION");
         GUI.Label(new Rect(5, y += 40, 300, 400), $"World Position ({transform.position.x / 1000:F2}, {transform.position.z / 1000:F2})km");
@@ -117,9 +132,10 @@ public class PlaneManager : MonoBehaviour
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringPitch, -1, 1);
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringRoll, -1, 1);
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringYaw, -1, 1);
+        GUI.Label(new Rect(5, y += 20, 300, 400), WheelBreaks ? $"Wheel Brakes engaged!" : "");
         GUI.Label(new Rect(5, y += 40, 300, 400), $"Engine 1 RPM: {physics.engines[0].RPM:F0}");
 
-        GUI.Box(new Rect(Screen.width - 185, 150, 185, 245), "");
+        GUI.Box(new Rect(Screen.width - 185, 150, 185, 265), "");
         GUI.Label(new Rect(Screen.width - 180, y = 150, 300, 400), $"CONTROLS");
         GUI.Label(new Rect(Screen.width - 180, y += 40, 300, 400), $"Shift/Ctrl - Throttle");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"W/S - Pitch");
@@ -130,6 +146,7 @@ public class PlaneManager : MonoBehaviour
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"O - Toggle wind");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"L - Toggle Aerobatic smoke");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"M - Toggle audio");
+        GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"B - Toggle Wheel Breaks");
     }
 
     public bool IsAutoPilot()
