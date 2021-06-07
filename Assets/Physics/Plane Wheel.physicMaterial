@@ -7,8 +7,8 @@ PhysicMaterial:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Plane Wheel
-  dynamicFriction: 0.02
-  staticFriction: 0.02
+  dynamicFriction: 0.29999998
+  staticFriction: 0.29999998
   bounciness: 0.2
   frictionCombine: 1
   bounceCombine: 0

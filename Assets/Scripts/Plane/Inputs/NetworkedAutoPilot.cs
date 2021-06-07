@@ -23,6 +23,7 @@ public class NetworkedAutoPilot : AutoPilot
     private float pitch = 0.0f;
     private float roll = 0.0f;
     private float yaw = 0.0f;
+    private bool brake = false;
 
     void Start()
     {
@@ -35,20 +36,23 @@ public class NetworkedAutoPilot : AutoPilot
                 var receivedResults = await server.ReceiveAsync();
                 String data = Encoding.ASCII.GetString(receivedResults.Buffer);
 
-                if (receivedResults.Buffer.Length != 4 * sizeof(float))
+                float[] floats = new float[4];
+                bool[] bools = new bool[1];
+
+                if (receivedResults.Buffer.Length != floats.Length * sizeof(float) + bools.Length * sizeof(bool))
                 {
                     Debug.LogError("AutoPilot Input is not of length 4*float!");
                     continue;
                 }
 
-                float[] floats = new float[4];
-                Buffer.BlockCopy(receivedResults.Buffer, 0, floats, 0, 4 * sizeof(float));
+                Buffer.BlockCopy(receivedResults.Buffer, 0, floats, 0, floats.Length * sizeof(float));
+                Buffer.BlockCopy(receivedResults.Buffer, floats.Length * sizeof(float), bools, 0, bools.Length * sizeof(bool));
 
                 this.throttle = floats[0];
                 this.pitch = floats[1];
                 this.roll = floats[2];
                 this.yaw = floats[3];
-
+                this.brake = bools[0];
             }
         });
     }
@@ -104,5 +108,10 @@ public class NetworkedAutoPilot : AutoPilot
     public override float GetYaw()
     {
         return this.yaw;
+    }
+
+    public override bool GetBrake()
+    {
+        return this.brake;
     }
 }

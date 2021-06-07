@@ -64,7 +64,7 @@ public class PlaneManager : MonoBehaviour
             SteeringPitch = autoPilot.GetPitch();
             SteeringRoll = autoPilot.GetRoll();
             SteeringYaw = autoPilot.GetYaw();
-            WheelBreaks = false;
+            WheelBreaks = autoPilot.GetBrake();
         }
         else
         {
