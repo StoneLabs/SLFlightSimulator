@@ -5,6 +5,7 @@ using UnityEngine;
 public class ControlWheel : ControlSurface
 {
     public PlaneManager manager;
+    public Vector3 frontForce;
     public float baseForce = 100;
 
     private float input = 0;
@@ -35,9 +36,11 @@ public class ControlWheel : ControlSurface
         {
             if (!isTouchDown)
                 return Vector3.zero;
-            return transform.forward * ImpactZ * baseForce * input +
-                    transform.up     * ImpactY * baseForce * input +
-                    transform.right  * ImpactX * baseForce * input;
+
+            return (transform.forward * ImpactZ * input + transform.forward * frontForce.z * Mathf.Abs(input) +
+                    transform.up      * ImpactY * input + transform.up      * frontForce.y * Mathf.Abs(input) +
+                    transform.right   * ImpactX * input + transform.right   * frontForce.x * Mathf.Abs(input))
+                    * baseForce;
         }
     }
     public void FixedUpdate()
