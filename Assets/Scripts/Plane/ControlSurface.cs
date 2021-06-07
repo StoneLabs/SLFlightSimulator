@@ -14,7 +14,7 @@ public class ControlSurface : MonoBehaviour
     [Range(-5, 5)]
     public float ImpactZ = 0.0f;
 
-    public void control(float pitch, float yaw, float roll)
+    public virtual void control(float pitch, float yaw, float roll)
     {
         if (axis == ControlAxis.None)
             return;
