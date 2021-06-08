@@ -5,18 +5,18 @@ class WheelSlipPreventer : MonoBehaviour
 {
     public enum Axis { X, Y, Z }
     public PlaneManager manager;
+    public TouchDownWheelDetector touchDownDetector;
 
     public Axis slipAxis;
     public float CounterForceMagnitude = 1000;
     public float GizmosThrustDivider = 50;
 
-    private bool isTouchDown = false;
 
     public Vector3 LocalSlip
     {
         get
         {
-            if (!isTouchDown)
+            if (!touchDownDetector.IsTouchDown)
                 return Vector3.zero;
 
             Vector3 worldVelocity = manager.physics.body.GetPointVelocity(transform.position) - manager.physics.body.velocity;
@@ -44,14 +44,6 @@ class WheelSlipPreventer : MonoBehaviour
     public void FixedUpdate()
     {
         manager.physics.body.AddForceAtPosition(CounterSlipForce, transform.position);
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        isTouchDown = true;
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        isTouchDown = false;
     }
 
     public void OnDrawGizmos()

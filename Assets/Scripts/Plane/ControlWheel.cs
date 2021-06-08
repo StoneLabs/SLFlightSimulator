@@ -5,11 +5,11 @@ using UnityEngine;
 public class ControlWheel : ControlSurface
 {
     public PlaneManager manager;
+    public TouchDownWheelDetector touchDownDetector;
     public Vector3 frontForce;
     public float baseForce = 100;
 
     private float input = 0;
-    private bool isTouchDown = false;
 
     public float GizmosThrustDivider = 50.0f;
 
@@ -21,20 +21,11 @@ public class ControlWheel : ControlSurface
         input = (axis == ControlAxis.Pitch ? pitch : (axis == ControlAxis.Yaw ? yaw : roll));
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        isTouchDown = true;
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        isTouchDown = false;
-    }
-
     private Vector3 ForceVector
     {
         get
         {
-            if (!isTouchDown)
+            if (!touchDownDetector.IsTouchDown)
                 return Vector3.zero;
 
             return (transform.forward * ImpactZ * input + transform.forward * frontForce.z * Mathf.Abs(input) +
@@ -52,10 +43,5 @@ public class ControlWheel : ControlSurface
     {
         GizmosUtils.SetT(transform);
         GizmosUtils.DrawArrow(Vector3.zero, ForceVector, ForceVector.magnitude / GizmosThrustDivider);
-    }
-
-    public void OnGUI()
-    {
-        //GUI.Label(new Rect(500, 500, 500, 500), isTouchDown.ToString());
     }
 }
