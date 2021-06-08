@@ -56,6 +56,6 @@ public class ControlWheel : ControlSurface
 
     public void OnGUI()
     {
-        GUI.Label(new Rect(500, 500, 500, 500), isTouchDown.ToString());
+        //GUI.Label(new Rect(500, 500, 500, 500), isTouchDown.ToString());
     }
 }
