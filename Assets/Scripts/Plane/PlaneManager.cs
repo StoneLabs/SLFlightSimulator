@@ -60,6 +60,12 @@ public class PlaneManager : MonoBehaviour
         SetSmokeEmmiters();
     }
 
+    public void OnApplicationQuit()
+    {
+        WheelMaterial.dynamicFriction = wheelBrakeBaseDynamicFriction;
+        WheelMaterial.staticFriction = wheelBrakeBaseStaticFriction;
+    }
+
     public void Update()
     {
         if (IsAutoPilot())
