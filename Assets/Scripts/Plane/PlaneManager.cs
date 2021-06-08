@@ -44,6 +44,10 @@ public class PlaneManager : MonoBehaviour
     public float wheelBrakeBaseDynamicFriction = 0.01f;
     public float wheelBrakeBaseStaticFriction = 0.02f;
 
+    [Header("Respawn")]
+    public RespawnPoint[] respawnPoints;
+    public float respawnVelocity;
+
     [Header("Debug settings")]
     public bool drawDebug = false;
 
@@ -97,8 +101,14 @@ public class PlaneManager : MonoBehaviour
 
     public void FixedUpdate()
     {
-        if (Input.GetKey("r"))
-            physics.Respawn();
+        foreach (RespawnPoint respawnPoint in respawnPoints)
+        {
+            if (Input.GetKey(respawnPoint.spawnKey))
+            {
+                physics.Respawn(respawnPoint);
+                break;
+            }
+        }
 
         foreach (ControlSurface surface in controlSurfaces)
             surface.control(SteeringPitch, SteeringYaw, SteeringRoll);
@@ -135,7 +145,7 @@ public class PlaneManager : MonoBehaviour
         GUI.Label(new Rect(5, y += 20, 300, 400), WheelBreaks ? $"Wheel Brakes engaged!" : "");
         GUI.Label(new Rect(5, y += 40, 300, 400), $"Engine 1 RPM: {physics.engines[0].RPM:F0}");
 
-        GUI.Box(new Rect(Screen.width - 185, 150, 185, 265), "");
+        GUI.Box(new Rect(Screen.width - 185, 150, 185, 285 + respawnPoints.Length * 20), "");
         GUI.Label(new Rect(Screen.width - 180, y = 150, 300, 400), $"CONTROLS");
         GUI.Label(new Rect(Screen.width - 180, y += 40, 300, 400), $"Shift/Ctrl - Throttle");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"W/S - Pitch");
@@ -147,6 +157,10 @@ public class PlaneManager : MonoBehaviour
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"L - Toggle Aerobatic smoke");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"M - Toggle audio");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"B - Toggle Wheel Breaks");
+
+        y += 20;
+        foreach (RespawnPoint spawn in respawnPoints)
+            GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"{spawn.spawnKey} - {spawn.spawnName}");
     }
 
     public bool IsAutoPilot()

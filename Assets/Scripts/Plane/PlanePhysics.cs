@@ -41,7 +41,7 @@ public class PlanePhysics : MonoBehaviour
     private float spawnFuel;
     void Start()
     {
-        GetComponent<Rigidbody>().AddForce(transform.forward * 30, ForceMode.VelocityChange);
+        GetComponent<Rigidbody>().AddForce(transform.forward * manager.respawnVelocity, ForceMode.VelocityChange);
         DryMass = body.mass;
         spawnPosition = transform.position;
         spawnRotation = transform.rotation;
@@ -55,14 +55,14 @@ public class PlanePhysics : MonoBehaviour
         lastFrameVelocity = body.velocity;
     }
 
-    public void Respawn()
+    public void Respawn(RespawnPoint spawn)
     {
         manager.fuelLevel = spawnFuel;
-        body.MovePosition(spawnPosition);
-        body.MoveRotation(spawnRotation);
+        body.MovePosition(spawn.transform.position);
+        body.MoveRotation(spawn.transform.rotation);
         body.velocity = Vector3.zero;
         body.angularVelocity = Vector3.zero;
-        GetComponent<Rigidbody>().AddForce(transform.forward * 30, ForceMode.VelocityChange);
+        GetComponent<Rigidbody>().AddForce(spawn.spawnInMotion ? transform.forward * manager.respawnVelocity : Vector3.zero, ForceMode.VelocityChange);
 
         foreach (AeroEngine engine in engines)
             engine.Respawn();
