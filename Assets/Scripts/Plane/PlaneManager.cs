@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows.Speech;
 
 public class PlaneManager : MonoBehaviour
 {
@@ -47,6 +48,7 @@ public class PlaneManager : MonoBehaviour
     [Header("Respawn")]
     public RespawnPoint[] respawnPoints;
     public float respawnVelocity;
+    public bool Crashed { get; private set; } = false;
 
     [Header("Debug settings")]
     public bool drawDebug = false;
@@ -111,6 +113,7 @@ public class PlaneManager : MonoBehaviour
         {
             if (Input.GetKey(respawnPoint.spawnKey))
             {
+                Crashed = false;
                 physics.Respawn(respawnPoint);
                 break;
             }
@@ -122,6 +125,16 @@ public class PlaneManager : MonoBehaviour
         physics.applyPhysics();
     }
 
+    public void Crash()
+    {
+        physics.FreezeSimulation();
+        Crashed = true;
+    }
+
+    void CrashBox(int id)
+    {
+        GUI.Label(new Rect(5, 20, 220, 20), "You crashed! Respawn to reset.");
+    }
     public void OnGUI()
     {
         if (!drawDebug)
@@ -167,6 +180,9 @@ public class PlaneManager : MonoBehaviour
         y += 20;
         foreach (RespawnPoint spawn in respawnPoints)
             GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"{spawn.spawnKey} - {spawn.spawnName}");
+
+        if (Crashed)
+            GUI.Window(1, new Rect((Screen.width / 2) - (230 / 2), 150, 230, 50), CrashBox, "CRASH!");
     }
 
     public bool IsAutoPilot()

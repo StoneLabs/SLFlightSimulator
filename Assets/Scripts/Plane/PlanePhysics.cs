@@ -57,6 +57,7 @@ public class PlanePhysics : MonoBehaviour
 
     public void Respawn(RespawnPoint spawn)
     {
+        FreezeSimulation(false);
         manager.fuelLevel = spawnFuel;
         body.MovePosition(spawn.transform.position);
         body.MoveRotation(spawn.transform.rotation);
@@ -66,6 +67,11 @@ public class PlanePhysics : MonoBehaviour
 
         foreach (AeroEngine engine in engines)
             engine.Respawn();
+    }
+
+    public void FreezeSimulation(bool state = true)
+    {
+        body.isKinematic = state;
     }
 
     // Update is called once per frame
