@@ -10,6 +10,8 @@ using UnityEngine;
 
 public class NetworkedAutoPilot : AutoPilot
 {
+    public const byte MSK_BRAKE     = 0b00000001;
+
     public PlaneManager plane;
 
     public string ipAddress = "127.0.0.1";
@@ -37,22 +39,22 @@ public class NetworkedAutoPilot : AutoPilot
                 String data = Encoding.ASCII.GetString(receivedResults.Buffer);
 
                 float[] floats = new float[4];
-                bool[] bools = new bool[1];
+                byte[] flags = new byte[1];
 
-                if (receivedResults.Buffer.Length != floats.Length * sizeof(float) + bools.Length * sizeof(bool))
+                if (receivedResults.Buffer.Length != floats.Length * sizeof(float) + flags.Length * sizeof(byte))
                 {
                     Debug.LogError("AutoPilot Input is not of length 4*float!");
                     continue;
                 }
 
                 Buffer.BlockCopy(receivedResults.Buffer, 0, floats, 0, floats.Length * sizeof(float));
-                Buffer.BlockCopy(receivedResults.Buffer, floats.Length * sizeof(float), bools, 0, bools.Length * sizeof(bool));
+                Buffer.BlockCopy(receivedResults.Buffer, floats.Length * sizeof(float), flags, 0, flags.Length * sizeof(byte));
 
                 this.throttle = floats[0];
                 this.pitch = floats[1];
                 this.roll = floats[2];
                 this.yaw = floats[3];
-                this.brake = bools[0];
+                this.brake = (flags[0] & MSK_BRAKE) > 0;
             }
         });
     }
@@ -78,6 +80,7 @@ public class NetworkedAutoPilot : AutoPilot
             plane.fuelCapacity,
             plane.fuelLevel,
             plane.fuelWeight,
+            plane.physics.engines[0].RPM,
             plane.environment.CalculatePressure(plane.physics.body.position.y),
             plane.environment.CalculateDensity(plane.physics.body.position.y),
             plane.environment.CalculateTemperature(plane.physics.body.position.y),
