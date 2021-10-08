@@ -9,6 +9,8 @@ public class AeroPropeller : MonoBehaviour
     public float AngularDrag = 1.0f;
     public float CD = 1.0f;
     public float CT = 1.0f;
+    public float Thickness = 0.1f;
+    public int blades;
 
     [Header("Visualization (3D)")]
     public Transform propellerBone;
@@ -36,7 +38,7 @@ public class AeroPropeller : MonoBehaviour
     {
         get
         {
-            return (PropellerLength * PropellerLength) * (2 * Mathf.PI) * RPS;
+            return PropellerLength * (2 * Mathf.PI) * RPS;
         }
     }
 
@@ -52,7 +54,7 @@ public class AeroPropeller : MonoBehaviour
     { 
         get
         {
-            float magnitude = engine.plane.environment.CalculateDensity(transform.position.y) * VelocityTip * VelocityTip * CT * DiskArea;
+            float magnitude = 0.5f * blades * engine.plane.environment.CalculateDensity(transform.position.y) * VelocityTip * VelocityTip * PropellerLength * Thickness * CT;
             return transform.forward * magnitude;
         }
     }
@@ -61,7 +63,7 @@ public class AeroPropeller : MonoBehaviour
     {
         get
         {
-            return engine.plane.environment.CalculateDensity(transform.position.y) * VelocityTip * VelocityTip * PropellerLength * CD;
+            return 0.5f * blades * engine.plane.environment.CalculateDensity(transform.position.y) * VelocityTip * VelocityTip * PropellerLength * Thickness * CD;
         }
     }
 

@@ -69,7 +69,7 @@ public class AeroEngine : MonoBehaviour
             if (Starved || engineDead)
                 return 0.0f;
 
-            return 
+            return
                 enginePower.Evaluate(RPM) * 
                 (plane.Throttle * (1.0f - minThrottle) + minThrottle) *
                 enginePowerDensityFactor.Evaluate(plane.environment.CalculateDensity(ThrustLocation.position.y));
@@ -109,8 +109,9 @@ public class AeroEngine : MonoBehaviour
         soundSource.pitch = soundPitch.Evaluate(RPM);
         soundSource.volume = soundVolumeBase * soundVolumeMultiplier.Evaluate(RPM);
 
-        float RPMAcceleration = (EnginePower - (propeller.CounterTorque / gearRatio)) / propeller.AngularDrag;
-        this.RPM += RPMAcceleration * Time.deltaTime;
+        //Debug.Log($"{EnginePower}, {propeller.CounterTorque / gearRatio}, {EnginePower - (propeller.CounterTorque / gearRatio)}");
+        float RPSAcceleration = (EnginePower - (propeller.CounterTorque / gearRatio)) / propeller.AngularDrag;
+        this.RPM += RPSAcceleration * Time.deltaTime * 60.0f;
 
         if (RPM < minRPMDead || RPM > maxRPMDead)
             engineDead = true;
