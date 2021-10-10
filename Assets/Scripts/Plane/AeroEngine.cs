@@ -110,7 +110,7 @@ public class AeroEngine : MonoBehaviour
         soundSource.volume = soundVolumeBase * soundVolumeMultiplier.Evaluate(RPM);
 
         //Debug.Log($"{EnginePower}, {propeller.CounterTorque / gearRatio}, {EnginePower - (propeller.CounterTorque / gearRatio)}");
-        float RPSAcceleration = (EnginePower - (propeller.CounterTorque / gearRatio)) / propeller.AngularDrag;
+        float RPSAcceleration = (EnginePower - (propeller.CounterTorque * gearRatio)) / propeller.AngularDrag;
         this.RPM += RPSAcceleration * Time.deltaTime * 60.0f;
 
         if (RPM < minRPMDead || RPM > maxRPMDead)
