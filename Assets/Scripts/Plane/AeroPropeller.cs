@@ -63,7 +63,8 @@ public class AeroPropeller : MonoBehaviour
     {
         get
         {
-            return 0.5f * blades * engine.plane.environment.CalculateDensity(transform.position.y) * VelocityTip * VelocityTip * PropellerLength * Thickness * CD;
+            // Calculate drag of propeller blades and multiply with the length of the propeller to attain torque in Newton meters
+            return PropellerLength * (0.5f * blades * engine.plane.environment.CalculateDensity(transform.position.y) * VelocityTip * VelocityTip * PropellerLength * Thickness * CD);
         }
     }
 
