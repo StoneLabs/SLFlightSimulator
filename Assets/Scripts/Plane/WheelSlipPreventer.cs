@@ -6,6 +6,7 @@ class WheelSlipPreventer : MonoBehaviour
     public enum Axis { X, Y, Z }
     public PlaneManager manager;
     public TouchDownWheelDetector touchDownDetector;
+    public AudioSource slipSound;
 
     public Axis slipAxis;
     public float CounterForceMagnitude = 1000;
@@ -20,7 +21,8 @@ class WheelSlipPreventer : MonoBehaviour
                 return Vector3.zero;
 
             Vector3 worldVelocity = manager.physics.body.GetPointVelocity(transform.position) - manager.physics.body.velocity;
-            Vector3 localVelocity = transform.worldToLocalMatrix * worldVelocity; switch (slipAxis)
+            Vector3 localVelocity = transform.worldToLocalMatrix * worldVelocity;
+            switch (slipAxis)
             {
                 case Axis.X:
                     return new Vector3(localVelocity.x, 0, 0);
@@ -44,6 +46,11 @@ class WheelSlipPreventer : MonoBehaviour
     public void FixedUpdate()
     {
         manager.physics.body.AddForceAtPosition(CounterSlipForce, transform.position);
+
+        if (!touchDownDetector.IsTouchDown)
+            slipSound.mute = true;
+        else
+            slipSound.mute = !((manager.WheelBreaks && manager.physics.body.velocity.magnitude > 1f) || LocalSlip.magnitude >= 0.1f);
     }
 
     public void OnDrawGizmos()
