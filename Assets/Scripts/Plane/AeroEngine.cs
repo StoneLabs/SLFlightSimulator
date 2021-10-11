@@ -10,7 +10,7 @@ public class AeroEngine : MonoBehaviour
     [Header("Performance")]
     [Tooltip("Engine Torque per RPM")]
     public AnimationCurve enginePower;
-    [Tooltip("Engine:Propeller Ratio in X:1")]
+    [Tooltip("Engine:Propeller Rotation Ratio in X:1")]
     public float gearRatio = 3.0f;
 
     [Tooltip("Engine Power multiplicator per air pressure")]
@@ -110,7 +110,7 @@ public class AeroEngine : MonoBehaviour
         soundSource.volume = soundVolumeBase * soundVolumeMultiplier.Evaluate(RPM);
 
         //Debug.Log($"{EnginePower}, {propeller.CounterTorque / gearRatio}, {EnginePower - (propeller.CounterTorque / gearRatio)}");
-        float RPSAcceleration = (EnginePower - (propeller.CounterTorque * gearRatio)) / propeller.AngularDrag;
+        float RPSAcceleration = (EnginePower - (propeller.CounterTorque / gearRatio)) / propeller.AngularDrag;
         this.RPM += RPSAcceleration * Time.deltaTime * 60.0f;
 
         if (RPM < minRPMDead || RPM > maxRPMDead)
