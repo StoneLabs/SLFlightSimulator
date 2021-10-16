@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// To be extended by all control elements. Rotates transform depending on steering input. Must be added to PlaneManager.
+/// </summary>
 public class ControlSurface : MonoBehaviour
 {
     public enum ControlAxis { None, Pitch, Yaw, Roll}
     public ControlAxis axis;
 
+    // Steering axis impact on Transform axis
     [Range(-5, 5)]
     public float ImpactX = 0.0f;
     [Range(-5, 5)]

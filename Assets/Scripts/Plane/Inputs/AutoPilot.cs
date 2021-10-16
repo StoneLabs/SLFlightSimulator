@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// AutoPilot base class. To be overloaded by all autopilot input providers.
+/// </summary>
 public abstract class AutoPilot : MonoBehaviour
 {
     public abstract float GetThrottle();

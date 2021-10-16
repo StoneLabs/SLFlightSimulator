@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 
+/// <summary>
+/// AeroSurface class. Performs lift/drag calculations.
+/// </summary>
 public class AeroSurface : MonoBehaviour
 {
     public enum VisualizationColor { Static, Controlled }
@@ -29,7 +32,9 @@ public class AeroSurface : MonoBehaviour
     public bool showWind = false;
     public bool showWorldWind = true;
 
-
+    /// <summary>
+    /// Position relative to plane body
+    /// </summary>
     public Vector3 RelativePosition
     {
         get 
@@ -38,7 +43,10 @@ public class AeroSurface : MonoBehaviour
         }
     }
 
-    public Vector3 Wind
+    /// <summary>
+    /// Vector representing air direction and magnitude acting on plane. (Global rotation space)
+    /// </summary>
+    public Vector3 Air
     {
         get
         {
@@ -52,43 +60,58 @@ public class AeroSurface : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Current angle of attack of the Surface
+    /// </summary>
     public float AngleOfAttack
     {
         get
         {
             return Vector3.SignedAngle(
                 transform.forward, 
-                Vector3.ProjectOnPlane(-Wind, transform.right), 
+                Vector3.ProjectOnPlane(-Air, transform.right), 
                 transform.right);
         }
     }
 
-    public float WindSpeedFront
+    /// <summary>
+    /// Frontal air speed
+    /// </summary>
+    public float AirSpeedFront
     {
         get
         {
-            return Vector3.ProjectOnPlane(-Wind, transform.right).magnitude;
+            return Vector3.ProjectOnPlane(-Air, transform.right).magnitude;
         }
     }
 
+    /// <summary>
+    /// Lift force of the surface
+    /// </summary>
     public Vector3 LiftForce
     {
         get
         {
-            float magnitude = 0.5f * manager.environment.CalculateDensity(transform.position.y) * (WindSpeedFront * WindSpeedFront) * profile.CA_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
-            return Vector3.Cross(transform.right, Wind).normalized * magnitude;
+            float magnitude = 0.5f * manager.environment.CalculateDensity(transform.position.y) * (AirSpeedFront * AirSpeedFront) * profile.CA_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
+            return Vector3.Cross(transform.right, Air).normalized * magnitude;
         }
     }
 
+    /// <summary>
+    /// Drag force of the surface
+    /// </summary>
     public Vector3 DragForce
     {
         get
         {
-            float magnitude = 0.5f * manager.environment.CalculateDensity(transform.position.y) * (WindSpeedFront * WindSpeedFront) * profile.CD_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
-            return Wind.normalized * magnitude;
+            float magnitude = 0.5f * manager.environment.CalculateDensity(transform.position.y) * (AirSpeedFront * AirSpeedFront) * profile.CD_Curve.Evaluate(AngleOfAttack) * SurfaceArea;
+            return Air.normalized * magnitude;
         }
     }
 
+    /// <summary>
+    /// Surface area
+    /// </summary>
     public float SurfaceArea
     {
         get
@@ -99,6 +122,7 @@ public class AeroSurface : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        // Visualize vectors for debugging
 #if UNITY_EDITOR
         if (controlMode == VisualizationColor.Static)
             Gizmos.color = new Color(0.529f, 0.808f, 0.922f, 0.6f);
@@ -109,7 +133,7 @@ public class AeroSurface : MonoBehaviour
         float width = transform.lossyScale.x, depth = transform.lossyScale.z;
 
         // Project wind on UP/FORWARD plane of wing
-        Vector3 WindProjection = Vector3.ProjectOnPlane(-Wind, transform.right);
+        Vector3 WindProjection = Vector3.ProjectOnPlane(-Air, transform.right);
 
 
         void renderSurface()
@@ -129,7 +153,7 @@ public class AeroSurface : MonoBehaviour
                 GizmosUtils.DrawArrow(Vector3.zero, transform.forward, 1, Color.yellow);
 
             if (showWind)
-                GizmosUtils.DrawArrow(-Wind, Wind, Wind.magnitude, Color.green);
+                GizmosUtils.DrawArrow(-Air, Air, Air.magnitude, Color.green);
 
             if (showWindSpeedFront)
             {

@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
+/// <summary>
+/// Prevents slip of wheel due to lack of anisotropic friction
+/// </summary>
 class WheelSlipPreventer : MonoBehaviour
 {
     public enum Axis { X, Y, Z }
@@ -13,6 +16,7 @@ class WheelSlipPreventer : MonoBehaviour
     public float GizmosThrustDivider = 50;
 
 
+    // Calculates local slip velocity
     public Vector3 LocalSlip
     {
         get
@@ -35,6 +39,8 @@ class WheelSlipPreventer : MonoBehaviour
             }
         }
     }
+
+    // Calculates force to counter slipping (functional but not physically accurate)
     public Vector3 CounterSlipForce
     {
         get
@@ -45,16 +51,19 @@ class WheelSlipPreventer : MonoBehaviour
 
     public void FixedUpdate()
     {
+        // Apply force to wheel (force is zero if wheel is not on ground
         manager.physics.body.AddForceAtPosition(CounterSlipForce, transform.position);
 
+        // Play sound on slip if slip speed exceedes threshold value 0.1m/s
         if (!touchDownDetector.IsTouchDown)
-            slipSound.mute = true;
+            slipSound.mute = true;  // No sound should play
         else
             slipSound.mute = !((manager.WheelBreaks && manager.physics.body.velocity.magnitude > 1f) || LocalSlip.magnitude >= 0.1f);
     }
 
     public void OnDrawGizmos()
     {
+        // Visualize force
         GizmosUtils.SetT(transform);
         GizmosUtils.DrawArrow(Vector3.zero, CounterSlipForce, CounterSlipForce.magnitude / GizmosThrustDivider);
     }

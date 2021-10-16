@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Wheel touchdown detection
+/// </summary>
 public class TouchDownWheelDetector : MonoBehaviour
 {
+    // TouchDown count. Increses when trigger is entered, decreases when trigger is exited
     private uint touchDownCount = 0;
     public bool IsTouchDown
     {
@@ -11,6 +15,7 @@ public class TouchDownWheelDetector : MonoBehaviour
         }
     }
 
+    // Setting
     [Header("Debug Visualization")]
     public bool visualize;
     public string wheelName;

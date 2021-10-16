@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// AeroProfile. Profile of aerodynamic element. CA/CD values over alpha
+/// </summary>
 [CreateAssetMenu()]
 public class AeroProfile : SubscribeableSettings
 {

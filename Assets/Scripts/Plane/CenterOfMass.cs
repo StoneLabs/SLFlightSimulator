@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Changes center of mass of attached rigidbody
+/// </summary>
 public class CenterOfMass : MonoBehaviour
 {
     public bool OverrideCOM = false;
@@ -9,11 +12,12 @@ public class CenterOfMass : MonoBehaviour
     [Range(0.0f, 1.0f)]
     public float VisualizationRadius = 0.2f;
 
-    private bool overridenCOM;
+    // Wether COM has been overwritten
+    private bool overridenCOM; 
 
-    // Update is called once per frame
     void Update()
     {
+        // Apply/reset COM to set state as needed
         if (overridenCOM != OverrideCOM)
         {
             Debug.Log("Changing COM");
@@ -21,7 +25,7 @@ public class CenterOfMass : MonoBehaviour
             if (OverrideCOM)
                 GetComponent<Rigidbody>().centerOfMass = NewCenterOfMass;
             else
-                GetComponent<Rigidbody>().ResetCenterOfMass();
+                GetComponent<Rigidbody>().ResetCenterOfMass(); // original value
 
             overridenCOM = OverrideCOM;
         }
@@ -29,6 +33,7 @@ public class CenterOfMass : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        // Visualize COM
         Gizmos.DrawSphere(GetComponent<Rigidbody>().worldCenterOfMass, VisualizationRadius);
     }
 

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
 
+/// <summary>
+/// PlaneManager. Centeral manager for aircraft.
+/// </summary>
 public class PlaneManager : MonoBehaviour
 {
     [Header("Components")]
@@ -31,8 +34,9 @@ public class PlaneManager : MonoBehaviour
     [Header("Aerobatic Smoke")]
     public TrailRenderer[] aerobaticEmitters;
     public bool AerobaticSmokeStart = false;
-    public bool AerobaticSmoke { get; private set; } = false;
+    public bool AerobaticSmoke { get; private set; } = false; // Needs SetSmokeEmmiters() call to apply
 
+    // Steering axes names by intended effect
     public float Throttle { get; private set; }
     public float SteeringPitch { get; private set; }
     public float SteeringYaw { get; private set; }
@@ -55,21 +59,25 @@ public class PlaneManager : MonoBehaviour
 
     public void Start()
     {
+        // Set friction values for wheelbrake to default
         WheelMaterial.dynamicFriction = wheelBrakeBaseDynamicFriction;
         WheelMaterial.staticFriction = wheelBrakeBaseStaticFriction;
 
+        // Set smoke at start
         AerobaticSmoke = AerobaticSmokeStart;
         SetSmokeEmmiters();
     }
 
     public void OnApplicationQuit()
     {
+        // Change back friction as this operation is persistant over simulation stops.... 
         WheelMaterial.dynamicFriction = wheelBrakeBaseDynamicFriction;
         WheelMaterial.staticFriction = wheelBrakeBaseStaticFriction;
     }
 
     public void Update()
     {
+        // Get steering inputs from either autopilot or input manager.
         if (IsAutoPilot())
         {
             Throttle = autoPilot.GetThrottle();
@@ -86,29 +94,36 @@ public class PlaneManager : MonoBehaviour
             SteeringYaw = input.GetYaw();
             WheelBreaks = input.GetBreak();
         }
+
+        // Clamp values for control axes
         Throttle = Mathf.Clamp01(Throttle);
         SteeringPitch = Mathf.Clamp(SteeringPitch, -1, 1);
         SteeringRoll = Mathf.Clamp(SteeringRoll, -1, 1);
         SteeringYaw = Mathf.Clamp(SteeringYaw, -1, 1);
 
+        // Change friction of 
         WheelMaterial.dynamicFriction = wheelBrakeBaseDynamicFriction * (WheelBreaks ? WheelBrakeMultiplier : 1);
         WheelMaterial.staticFriction = wheelBrakeBaseStaticFriction * (WheelBreaks ? WheelBrakeMultiplier : 1);
 
+        // Toggle wind
         if (Input.GetKeyDown("o"))
             environment.ToggleWind();
 
+        // Toggle Smoke
         if (Input.GetKeyDown("l"))
         {
             AerobaticSmoke = !AerobaticSmoke;
             SetSmokeEmmiters();
         }
 
+        // Update fuel values from engine consumption
         foreach (AeroEngine engine in physics.engines)
             fuelLevel -= engine.FuelConsumption * Time.deltaTime * fuelConsumptionMultiplier;
     }
 
     public void FixedUpdate()
     {
+        // Respawn at respawnpoint if corresponding button is pressed
         foreach (RespawnPoint respawnPoint in respawnPoints)
         {
             if (Input.GetKey(respawnPoint.spawnKey))
@@ -119,18 +134,27 @@ public class PlaneManager : MonoBehaviour
             }
         }
 
+        // Update control surface positions
         foreach (ControlSurface surface in controlSurfaces)
             surface.control(SteeringPitch, SteeringYaw, SteeringRoll);
 
+        // Perform physics calculation
         physics.applyPhysics();
     }
 
+    /// <summary>
+    /// Stop simulation and show crash warning
+    /// </summary>
     public void Crash()
     {
         physics.FreezeSimulation();
         Crashed = true;
     }
 
+    /// <summary>
+    /// Crash box gui function.
+    /// Rendered crash box gui
+    /// </summary>
     void CrashBox(int id)
     {
         GUI.Label(new Rect(5, 20, 220, 20), "You crashed! Respawn to reset.");
@@ -139,6 +163,8 @@ public class PlaneManager : MonoBehaviour
     {
         if (!drawDebug)
             return;
+
+        // Visualize debug information on left side
 
         GUI.Box(new Rect(0, 150, 310, 440), "");
         int y = 150;
@@ -164,6 +190,8 @@ public class PlaneManager : MonoBehaviour
         GUI.Label(new Rect(5, y += 20, 300, 400), WheelBreaks ? $"Wheel Brakes engaged!" : "");
         GUI.Label(new Rect(5, y += 40, 300, 400), $"Engine 1 RPM: {physics.engines[0].RPM:F0}");
 
+        // Visualize keybinds on right side
+
         GUI.Box(new Rect(Screen.width - 185, 150, 185, 265 + respawnPoints.Length * 20), "");
         GUI.Label(new Rect(Screen.width - 180, y = 150, 300, 400), $"CONTROLS");
         GUI.Label(new Rect(Screen.width - 180, y += 40, 300, 400), $"Shift/Ctrl - Throttle");
@@ -180,15 +208,23 @@ public class PlaneManager : MonoBehaviour
         foreach (RespawnPoint spawn in respawnPoints)
             GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"{spawn.spawnKey} - {spawn.spawnName}");
 
+        // Show crashed box if required
         if (Crashed)
             GUI.Window(1, new Rect((Screen.width / 2) - (230 / 2), 150, 230, 50), CrashBox, "CRASH!");
     }
 
+    /// <summary>
+    /// Wether plane is currently in autopilot mode
+    /// </summary>
+    /// <returns></returns>
     public bool IsAutoPilot()
     {
         return input.IsAutoPilot();
     }
 
+    /// <summary>
+    /// Apply changes to AerobaticSmoke variable
+    /// </summary>
     private void SetSmokeEmmiters()
     {
         foreach (TrailRenderer renderer in aerobaticEmitters)

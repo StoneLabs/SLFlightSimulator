@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Inspired by https://answers.unity.com/questions/25965/camera-orbit-on-mouse-drag.html
+
+/// <summary>
+/// Component for orbiting object on left click.
+/// Returns to locked initial position
+/// </summary>
 public class OrbitResetCamera : MonoBehaviour
 {
     private Vector3 startPosition;
@@ -35,8 +41,10 @@ public class OrbitResetCamera : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
+            // Orbit around parent
             Cursor.lockState = CursorLockMode.Locked;
 
+            // Allow rotation
             velocityX += xSpeed * Input.GetAxis("Mouse X") * distance * 0.01f;
             velocityY += ySpeed * Input.GetAxis("Mouse Y") * distance * 0.01f;
 
@@ -44,9 +52,11 @@ public class OrbitResetCamera : MonoBehaviour
             rotationX = ClampAngle(rotationX - velocityY, yLowerLimit, yUpperLimit);
             Quaternion rotation = Quaternion.Euler(rotationX, rotationY, 0);
 
+            // Allow scrolling
             distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
             Vector3 position = rotation * new Vector3(0.0f, 0.0f, -distance) + transform.parent.position;
 
+            // Apply transformation changes
             transform.rotation = rotation;
             transform.position = position;
             velocityX = Mathf.Lerp(velocityX, 0, Time.deltaTime * smoothing);
@@ -54,6 +64,7 @@ public class OrbitResetCamera : MonoBehaviour
         }
         else
         {
+            // Return to fixed position
             Cursor.lockState = CursorLockMode.None;
 
             distance = startDistance;

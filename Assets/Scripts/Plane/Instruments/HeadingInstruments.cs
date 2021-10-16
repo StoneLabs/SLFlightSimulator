@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Heading instrument. Visualizes heading using disk rotator
+/// </summary>
 public class HeadingInstruments : Instrument
 {
     public Transform needle;
@@ -12,6 +15,7 @@ public class HeadingInstruments : Instrument
 
     void Update()
     {
+        // Rotate disk as required
         needle.localRotation = Quaternion.Euler(90 + manager.physics.Heading * degreeperDegree + degreeOffset, -90, -90);
     }
 }

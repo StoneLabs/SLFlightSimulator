@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Moves a oject constantly by translation (not physics based)
+/// </summary>
 public class ConstantMovement : MonoBehaviour
 {
     public Vector3 movement;

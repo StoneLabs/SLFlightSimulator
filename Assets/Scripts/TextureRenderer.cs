@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// Simple component to draw texture on model of found renderer
+/// </summary>
 [RequireComponent(typeof(Renderer))]
 public class TextureRenderer : MonoBehaviour
 {

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Fuel Instrument
+/// </summary>
 public class FuelInstrument : Instrument
 {
     public Transform needle;
@@ -10,6 +13,7 @@ public class FuelInstrument : Instrument
 
     void Update()
     {
-        needle.localRotation = Quaternion.Euler(-90, (manager.FuelPercentage * 2.0f - 1.0f) * maxAngle, 0);
+        // Show percentage of Fuel in system
+        needle.localRotation = Quaternion.Euler(-90, manager.FuelPercentage * maxAngle, 0);
     }
 }

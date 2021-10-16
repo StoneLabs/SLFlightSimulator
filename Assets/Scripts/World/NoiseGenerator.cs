@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// References:
+// https://adrianb.io/2014/08/09/perlinnoise.html
+// https://rtouti.github.io/graphics/perlin-noise-algorithm
+// https://github.com/SebLague/Procedural-Landmass-Generation
+
+/// <summary>
+/// Noise generators
+/// </summary>
 public static class NoiseGenerator
 {
     public enum NormMode
@@ -11,7 +19,19 @@ public static class NoiseGenerator
         Global
     }
 
-    // Reference: https://adrianb.io/2014/08/09/perlinnoise.html
+    /// <summary>
+    /// Generate noise map based on input parameters
+    /// </summary>
+    /// <param name="width">width of map</param>
+    /// <param name="height">height of map</param>
+    /// <param name="seed">seed of map</param>
+    /// <param name="scale">scale of noise generation</param>
+    /// <param name="octaves">number of octaves</param>
+    /// <param name="persistance">persistance</param>
+    /// <param name="lacunarity">lacunarity</param>
+    /// <param name="mode">Mode of output. Local = scale to full [0, 1] range. Global = try to scale on global average. This is performed on best guess method. Clipping may rarely occur.</param>
+    /// <param name="offset">Offset of map</param>
+    /// <returns>Noisemap</returns>
     public static float[,] GenerateNoisemap(int width, int height, int seed, float scale, uint octaves, float persistance, float lacunarity, NormMode mode, Vector2 offset)
     {
         if (width <= 0 || height <= 0)
@@ -86,6 +106,18 @@ public static class NoiseGenerator
         return noiseMap;
     }
 
+    /// <summary>
+    /// Calculate unclamped Perlin noise at position. Will not equal output from GenerateNoisemap
+    /// </summary>
+    /// <param name="x">X Coordinate</param>
+    /// <param name="y">Y Coordinate</param>
+    /// <param name="seed">Seed for generation</param>
+    /// <param name="scale">scale of noise</param>
+    /// <param name="octaves">Number of octaves</param>
+    /// <param name="persistance">persistance</param>
+    /// <param name="lacunarity">lacunarity</param>
+    /// <param name="offset">Offset of noise</param>
+    /// <returns>Noise value at specified coordinates</returns>
     public static float GlobalUnclampedPerlin(float x, float y, int seed, float scale, uint octaves, float persistance, float lacunarity, Vector2 offset)
     {
         if (scale <= 0)
@@ -126,6 +158,13 @@ public static class NoiseGenerator
         return value;
     }
 
+    /// <summary>
+    /// Generate falloff map. (Falling of towards the edge)
+    /// </summary>
+    /// <param name="size">Size of fallof map</param>
+    /// <param name="fallOffDistance">Distance of falloff start</param>
+    /// <param name="falloffHardness">Distance of falloff hardness</param>
+    /// <returns>Falloff map</returns>
     public static float[,] GenerateFalloffMap(int size, float fallOffDistance, float falloffHardness)
     {
         float[,] map = new float[size, size];
@@ -143,6 +182,12 @@ public static class NoiseGenerator
         return map;
     }
 
+    /// <summary>
+    /// Substracts map B from map A. Size of inputs can differ. Smaller map is used as output size.
+    /// </summary>
+    /// <param name="mapA">Map A</param>
+    /// <param name="mapB">Map B</param>
+    /// <returns>Map A - Map B</returns>
     public static float[,] SubstractMap(float[,] mapA, float[,] mapB)
     {
         int widthA = mapA.GetLength(0);

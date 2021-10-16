@@ -5,8 +5,12 @@ using System.Threading;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Map generator
+/// </summary>
 public class MapGenerator : MonoBehaviour
 {
+    // Preview mode for editor preview
     public enum EditorMode
     {
         COLORED,
@@ -17,23 +21,30 @@ public class MapGenerator : MonoBehaviour
         FLAT_FALLOFF
     }
 
+    // Size of chunk (effective size is -1)
     public const int chunkSize = 241;
 
+    // Settings for editor preview
     [Header("Editor Preview Properties")]
     public EditorMode editorMode = EditorMode.COLORED;
     public NoiseGenerator.NormMode editorNormalMode = NoiseGenerator.NormMode.Local;
     public MeshTextureRenderer editorRenderer;
     public bool editorCreateCollider = false;
 
+    // Show debug information onscreen
     [Header("Debug tools")]
     public bool debugInfoOnScreen = true;
     public Rect debugPosition;
+    private int generatorCount = 0;
 
+    // Generator settings object used for heightmap generation
     [Header("Generator settings")]
     public MapGeneratorSettings settings;
 
+    // Not used anymore
     private float[,] fallOffMap;
 
+    // MapData object that is given to the callback method
     public class MapData
     {
         public float[,] map;
@@ -52,11 +63,13 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Calculate falloff map at validation for performance
     private void OnValidate()
     {
         fallOffMap = NoiseGenerator.GenerateFalloffMap(chunkSize, settings.falloffDistance, settings.falloffHardness);
     }
 
+    // Storage for generator jobs that are to be returned in the main thread
     private class GeneratorJob
     {
         public MapData result;
@@ -73,21 +86,34 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Queue async generation of chunk
+    /// </summary>
     Queue<GeneratorJob> generatorResults = new Queue<GeneratorJob>();
     public void GenerateMapDataAsync(Vector2 offset, Action<MapData> callback)
     {
+        // For debug: increase count of running generators length
+        generatorCount++;
+
+        // Spawn thread for the generation of the requested chunk
         new Thread(() =>
         {
             lock (generatorResults)
             {
+                // Generate mapdata in this async context and queue the answer
                 MapData data = GenerateMapData(offset);
                 generatorResults.Enqueue(new GeneratorJob(data, callback));
+
+                // Results are available. Generator is done. decrease counter
+                generatorCount--; 
             }
         }).Start();
     }
 
     public void Update()
     {
+        // Perform callback operation if results are available.
+        // Only one per frame to prevent lag spikes from operations down the chain
         if (generatorResults.Count > 0)
         {
             var job = generatorResults.Dequeue();
@@ -95,25 +121,39 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Generate MapData for job given local offset.
+    /// </summary>
+    /// <param name="localOffset">Local offset in addition to static offset from generator settings</param>
+    /// <param name="mode"></param>
+    /// <returns></returns>
     public MapData GenerateMapData(Vector2 localOffset, NoiseGenerator.NormMode mode = NoiseGenerator.NormMode.Global)
     {
+        // Create job object
         MapData mapData = new MapData();
 
+        // Calculate noise map with local offset
         mapData.map = NoiseGenerator.GenerateNoisemap(chunkSize, chunkSize, settings.seed, settings.noiseScale,
             settings.octaves, settings.persistance, settings.lacunarity, mode, settings.offset + localOffset);
 
+        // Apply falloff if requested. (not used, untested)
         if (settings.applyFalloff)
             mapData.map = NoiseGenerator.SubstractMap(mapData.map, fallOffMap);
 
+        // Calculate Meshes and Colors for all LODs
+        // This is done in the async context in which this function was called
+        // Mesh object generation is performed later on in the main thread due to unity limitations
         mapData.textureData = TextureGenerator.ColorArrayFromGrayscaleMap(mapData.map, settings.regions);
         for (int i = 0; i <= 6; i++)
             mapData.LODMeshData[i] = MeshGenerator.GenerateTerrainMesh(mapData.map, i, settings.heightFactor, settings.heightCurve);
 
+        // Return job
         return mapData;
     }
 
     public void EditorRender()
     {
+        // Peview settings on given plane as preview in editor
         MapData data = GenerateMapData(Vector2.zero, editorNormalMode);
         MeshData falloff_mesh = MeshGenerator.GenerateTerrainMesh(fallOffMap, settings.lod, settings.heightFactor, AnimationCurve.Linear(0, 0, 1, 1));
         MeshData plane = MeshGenerator.GeneratePlaneMesh(chunkSize, chunkSize);
@@ -146,13 +186,15 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    // Print debug information
     private void OnGUI()
     {
         if (debugInfoOnScreen)
         {
             String debugInfo = "";
             debugInfo += "World generator debug INFO:\n";
-            debugInfo += $"World generator quque: {this.generatorResults.Count}\n";
+            debugInfo += $"World generator jobs running: {generatorCount}\n";
+            debugInfo += $"World generatr callback queue length: {this.generatorResults.Count}\n";
 
             GUI.Label(debugPosition, debugInfo);
         }

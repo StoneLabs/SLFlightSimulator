@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Allows for settings to be subscribed to. Listener will be called on vallidation (change).
+/// </summary>
 public class SubscribeableSettings : ScriptableObject
 {
     private System.Action listener = null;

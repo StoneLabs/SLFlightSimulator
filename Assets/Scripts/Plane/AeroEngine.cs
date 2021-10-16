@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 
+/// <summary>
+/// AeroEngine. Works in tandem with AeroPropeller to simulate engine/propeller system.
+/// </summary>
 public class AeroEngine : MonoBehaviour
 {
     public PlaneManager plane;
@@ -45,6 +48,9 @@ public class AeroEngine : MonoBehaviour
     public AnimationCurve soundVolumeMultiplier;
     private float soundVolumeBase;
 
+    /// <summary>
+    /// Wether engine has starved
+    /// </summary>
     public bool Starved
     {
         get
@@ -52,6 +58,10 @@ public class AeroEngine : MonoBehaviour
             return plane.FuelPercentage < fuelStarvePercentage;
         }
     }
+
+    /// <summary>
+    /// Current fuel consumption per deltaT (MUST be multiplied with deltaT)
+    /// </summary>
     public float FuelConsumption
     {
         get
@@ -62,6 +72,10 @@ public class AeroEngine : MonoBehaviour
             return fuelConsumption * (EnginePower / 100.0f) / 60.0f;
         }
     }
+
+    /// <summary>
+    /// Current power output of engine
+    /// </summary>
     public float EnginePower
     {
         get
@@ -76,6 +90,9 @@ public class AeroEngine : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Thrust of system
+    /// </summary>
     public Vector3 Thrust
     {
         get
@@ -83,6 +100,10 @@ public class AeroEngine : MonoBehaviour
             return propeller.Thrust;
         }
     }
+
+    /// <summary>
+    /// Location of thrust to be applied to the system
+    /// </summary>
     public Transform ThrustLocation
     {
         get
@@ -93,12 +114,14 @@ public class AeroEngine : MonoBehaviour
 
     private void Start()
     {
+        // Set init RPM and sound volume
         RPM = 1000;
         soundVolumeBase = soundSource.volume;
     }
 
     public void Respawn()
     {
+        // Reset engine and rpm
         engineDead = false;
         if (RPM < minRPMDead)
             RPM = 1000;
@@ -106,23 +129,29 @@ public class AeroEngine : MonoBehaviour
 
     void Update()
     {
+        // Change sound volume/pitch
         soundSource.pitch = soundPitch.Evaluate(RPM);
         soundSource.volume = soundVolumeBase * soundVolumeMultiplier.Evaluate(RPM);
 
-        //Debug.Log($"{EnginePower}, {propeller.CounterTorque / gearRatio}, {EnginePower - (propeller.CounterTorque / gearRatio)}");
+        // Simulate RPM changes
         float RPSAcceleration = (EnginePower - (propeller.CounterTorque / gearRatio)) / propeller.AngularDrag;
         this.RPM += RPSAcceleration * Time.deltaTime * 60.0f;
 
+        // Simulate engine death
         if (RPM < minRPMDead || RPM > maxRPMDead)
             engineDead = true;
     }
 
+    /// <summary>
+    /// Renders engine death/starved box
+    /// </summary>
     void EngineBox(int id) 
     { 
         GUI.Label(new Rect(5, 20, 220, 20), id == 0 ? "Engine died due to over/under RPM!" : "Out of fuel!"); 
     }
     private void OnGUI()
     {
+        // Show state boxes
         if (Starved)
             GUI.Window(1, new Rect((Screen.width / 2) - (230 / 2), 50, 230, 50), EngineBox, "ENGINE DIED!");
         if (engineDead)

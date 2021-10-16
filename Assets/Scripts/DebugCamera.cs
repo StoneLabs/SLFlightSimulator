@@ -2,6 +2,11 @@
 using System.ComponentModel;
 using UnityEngine;
 
+
+
+/// <summary>
+/// 3D freespace camera for debugging purposes
+/// </summary>
 [RequireComponent(typeof(Camera))]
 public class DebugCamera : MonoBehaviour
 {
@@ -18,6 +23,7 @@ public class DebugCamera : MonoBehaviour
 
 	private Vector3 velocity;
 
+	// Wether game is in focus
 	bool Focused
 	{
 		get
@@ -44,9 +50,11 @@ public class DebugCamera : MonoBehaviour
 
 	void Update()
 	{
+		// Update if focused
 		if (Focused)
 			UpdateCamera();
 
+		// Focus/unfocus game
 		if (!Focused && Input.GetMouseButtonDown(0))
 			Focused = true;
 

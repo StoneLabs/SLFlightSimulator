@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using UnityEngine;
 
+/// <summary>
+/// Basic plane Input. Input based on Unity axes. Allows for keyboard and controller input.
+/// </summary>
 public class BasicPlaneInput : PlaneInput
 {
     bool autoPilotEngaged = false;

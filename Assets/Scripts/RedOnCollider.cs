@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Changes attached material on trigger enter/leave
+/// </summary>
 [RequireComponent(typeof(Renderer))]
 [RequireComponent(typeof(Collider))]
 public class RedOnCollider : MonoBehaviour
@@ -12,7 +15,6 @@ public class RedOnCollider : MonoBehaviour
     public Color OnCollision;
     public Color OnFree;
 
-    // Start is called before the first frame update
     void Start()
     {
         this.renderer = GetComponent<Renderer>();

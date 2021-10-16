@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// AirSpeedInstrument. Visualizes Airspeed.
+/// </summary>
 public class AirSpeedInstrument : Instrument
 {
     public Transform needle;
@@ -10,6 +13,7 @@ public class AirSpeedInstrument : Instrument
 
     void Update()
     {
+        // Show airspeed in Knots
         float airSpeed = UnitConverter.MeterPerSecond2Knots(manager.physics.AirSpeed.magnitude);
         needle.localRotation = Quaternion.Euler(90 + airSpeed * dregreePerFeet, -90, -90);
     }

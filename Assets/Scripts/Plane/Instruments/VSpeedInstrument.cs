@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// VSpeed Instrument. Visualizes vertical speed.
+/// </summary>
 public class VSpeedInstrument : Instrument
 {
     public Transform needle;
@@ -11,6 +14,7 @@ public class VSpeedInstrument : Instrument
 
     void Update()
     {
+        // Show vspeed in 100 Feet per minute
         float hundretFeetPerMinute = UnitConverter.Meter2Feet(manager.physics.body.velocity.y) / 100 * 60;
         if (clamp)
             needle.localRotation = Quaternion.Euler(-90, Mathf.Clamp(hundretFeetPerMinute * dregreePerFeet, -175, 175), 0);

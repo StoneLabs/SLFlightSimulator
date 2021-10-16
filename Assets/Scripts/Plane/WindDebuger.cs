@@ -3,18 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Wind debug script. Visualizes windmap around plane
+/// </summary>
 public class WindDebuger : MonoBehaviour
 {
     public PlaneManager manager;
 
     public bool hide = false;
-    public float range = 750;
-    public float stepping = 50;
-    public float lengthMultiplier = 25;
-    public float yOffset = -100;
+    public float range = 750;           // Range of visualization
+    public float stepping = 50;         // Distance between arrows
+    public float lengthMultiplier = 25; // Multiplier for arrow length
+    public float yOffset = -100;        // Offset from plane
 
     private void OnDrawGizmos()
     {
+        // Visualize wind map
 #if UNITY_EDITOR
         if (hide)
             return;
@@ -29,6 +33,7 @@ public class WindDebuger : MonoBehaviour
             {
                 Vector3 pos = planePos + new Vector3(x, yOffset, z);
 
+                // Draw arrow for wind at given position
                 Vector3 wind = this.manager.environment.CalculateWind(pos);
                 Color color = new Color(Math.Abs(wind.x) / wind.magnitude, Math.Abs(wind.y) / wind.magnitude, Math.Abs(wind.z) / wind.magnitude);
                 GizmosUtils.DrawArrow(pos, wind, wind.magnitude * lengthMultiplier, color);

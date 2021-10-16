@@ -8,12 +8,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// Networked Autopilot. Communicates with autopilot using UDP.
+/// </summary>
 public class NetworkedAutoPilot : AutoPilot
 {
+    // Bit masks
     public const byte MSK_BRAKE     = 0b00000001;
 
     public PlaneManager plane;
 
+    // Connection parameters
     public string ipAddress = "127.0.0.1";
     public ushort localPort = 11337;
     public ushort remotePort = 11338;
@@ -21,6 +26,7 @@ public class NetworkedAutoPilot : AutoPilot
     UdpClient client = new UdpClient();
     IPEndPoint endpoint;
 
+    // Input values saved for request by planeManager
     private float throttle = 0.0f;
     private float pitch = 0.0f;
     private float roll = 0.0f;
@@ -35,26 +41,30 @@ public class NetworkedAutoPilot : AutoPilot
             UdpClient server = new UdpClient(localPort);
             while (true)
             {
+                // Get package
                 var receivedResults = await server.ReceiveAsync();
-                String data = Encoding.ASCII.GetString(receivedResults.Buffer);
 
+                // Convert to floats and flags as per specification
                 float[] floats = new float[4];
                 byte[] flags = new byte[1];
 
+                // Check length before conversion
                 if (receivedResults.Buffer.Length != floats.Length * sizeof(float) + flags.Length * sizeof(byte))
                 {
                     Debug.LogError("AutoPilot Input is not of length 4*float!");
                     continue;
                 }
 
+                // Convert using memcpy
                 Buffer.BlockCopy(receivedResults.Buffer, 0, floats, 0, floats.Length * sizeof(float));
                 Buffer.BlockCopy(receivedResults.Buffer, floats.Length * sizeof(float), flags, 0, flags.Length * sizeof(byte));
 
+                // Set input values for later request
                 this.throttle = floats[0];
                 this.pitch = floats[1];
                 this.roll = floats[2];
                 this.yaw = floats[3];
-                this.brake = (flags[0] & MSK_BRAKE) > 0;
+                this.brake = (flags[0] & MSK_BRAKE) > 0; // Apply bitmask
             }
         });
     }
@@ -65,7 +75,7 @@ public class NetworkedAutoPilot : AutoPilot
         endpoint = new IPEndPoint(IPAddress.Parse(ipAddress), remotePort);
         client.Connect(endpoint);
 
-
+        // Data object to be sent
         float[] data =
         {
             plane.transform.position.x,
@@ -86,6 +96,7 @@ public class NetworkedAutoPilot : AutoPilot
             plane.environment.CalculateTemperature(plane.physics.body.position.y),
         };
 
+        // Send data in byte[] buffer
         byte[] bytes = new byte[data.Length * 4];
         Buffer.BlockCopy(data, 0, bytes, 0, data.Length * 4);
 

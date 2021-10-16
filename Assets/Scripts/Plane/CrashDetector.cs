@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Performs crash detection using triggers. Ignored LandableTag
+/// </summary>
 class CrashDetector : MonoBehaviour
 {
     public PlaneManager manager;
@@ -7,10 +10,11 @@ class CrashDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // If collided object is not landable
         if (other.tag != LandableTag)
         {
             Debug.Log("Crash: " + other.tag + " != " + LandableTag);
-            manager.Crash();
+            manager.Crash(); // Crash plane
         }
     }
 }

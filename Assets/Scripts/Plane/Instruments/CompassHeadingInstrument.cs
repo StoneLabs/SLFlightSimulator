@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Compass heading instrument. Visualizes Heading using top mounted compass with cylinder inside.
+/// </summary>
 public class CompassHeadingInstrument : Instrument
 {
     public Transform cylinder;
@@ -12,6 +15,7 @@ public class CompassHeadingInstrument : Instrument
 
     void Update()
     {
+        // Rotate cylinder as required.
         cylinder.localRotation = Quaternion.Euler(90 + manager.physics.Heading * degreeperDegree + degreeOffset, -90, -90);
     }
 }

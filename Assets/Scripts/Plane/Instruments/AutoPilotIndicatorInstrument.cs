@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Auto pilot indicator. Visualizes AutoPilot state using material
+/// </summary>
 public class AutoPilotIndicatorInstrument : Instrument
 {
     public MeshRenderer indicator;

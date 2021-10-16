@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Wheel brake indicator instrument. Changes material based on wheel brake status
+/// </summary>
 public class WheelBrakeIndicatorInstrument : Instrument
 {
     public MeshRenderer indicator;
@@ -10,6 +13,7 @@ public class WheelBrakeIndicatorInstrument : Instrument
 
     private void Update()
     {
+        // Change material
         if (manager.WheelBreaks)
             indicator.material = onMaterial;
         else

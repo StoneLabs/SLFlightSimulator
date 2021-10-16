@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// Input base class to be used by all input providers.
+/// </summary>
 public abstract class PlaneInput : MonoBehaviour
 {
     public abstract float GetThrottle();
