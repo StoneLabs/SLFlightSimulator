@@ -111,10 +111,7 @@ public class PlaneManager : MonoBehaviour
 
         // Toggle Smoke
         if (Input.GetKeyDown("l"))
-        {
-            AerobaticSmoke = !AerobaticSmoke;
-            SetSmokeEmmiters();
-        }
+            SetSmoke();
 
         // Update fuel values from engine consumption
         foreach (AeroEngine engine in physics.engines)
@@ -229,5 +226,14 @@ public class PlaneManager : MonoBehaviour
     {
         foreach (TrailRenderer renderer in aerobaticEmitters)
             renderer.emitting = AerobaticSmoke;
+    }
+
+    /// <summary>
+    /// Toggles Smoke
+    /// </summary>
+    public void SetSmoke(bool? state = null)
+    {
+        AerobaticSmoke = state ?? !AerobaticSmoke;
+        SetSmokeEmmiters();
     }
 }

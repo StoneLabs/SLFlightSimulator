@@ -83,8 +83,12 @@ public class PlanePhysics : MonoBehaviour
     /// <param name="spawn">Selected spawnpoint</param>
     public void Respawn(RespawnPoint spawn)
     {
+        // Turn off smoke to prevent trail following plane to new respawn
+        manager.SetSmoke(false);
+
         // Respawn plane by setting position, rotation, velocity, etc.
         FreezeSimulation(false);
+
         manager.fuelLevel = spawnFuel;
         body.MovePosition(spawn.transform.position);
         body.MoveRotation(spawn.transform.rotation);
