@@ -15,6 +15,8 @@ public class NetworkedAutoPilot : AutoPilot
 {
     // Bit masks
     public const byte MSK_BRAKE     = 0b00000001;
+    public const byte MSK_FLAPS     = 0b00000010;
+    
 
     public PlaneManager plane;
 
@@ -32,6 +34,7 @@ public class NetworkedAutoPilot : AutoPilot
     private float roll = 0.0f;
     private float yaw = 0.0f;
     private bool brake = false;
+    private bool flaps = false;
 
     void Start()
     {
@@ -65,6 +68,7 @@ public class NetworkedAutoPilot : AutoPilot
                 this.roll = floats[2];
                 this.yaw = floats[3];
                 this.brake = (flags[0] & MSK_BRAKE) > 0; // Apply bitmask
+                this.flaps = (flags[0] & MSK_FLAPS) > 0; // Apply bitmask
             }
         });
     }
@@ -131,6 +135,6 @@ public class NetworkedAutoPilot : AutoPilot
 
     public override bool GetFlaps()
     {
-        return false;
+        return this.flaps;
     }
 }
