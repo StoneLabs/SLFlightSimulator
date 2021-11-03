@@ -18,12 +18,21 @@ public class ControlSurface : MonoBehaviour
     [Range(-25, 25)]
     public float ImpactZ = 0.0f;
 
+    public bool instantaneous = true;
+    [Range(0, 10)]
+    public float speed = 1f;
+
     public virtual void control(float pitch, float yaw, float roll, float flaps)
     {
         if (axis == ControlAxis.None)
             return;
 
         float input = (axis == ControlAxis.Pitch ? pitch : (axis == ControlAxis.Yaw ? yaw : (axis == ControlAxis.Flaps ? flaps : roll)));
-        transform.localRotation = Quaternion.Euler(new Vector3(ImpactX * input, ImpactY * input, ImpactZ * input));
+        Quaternion targetRotation = Quaternion.Euler(new Vector3(ImpactX * input, ImpactY * input, ImpactZ * input));
+
+        if (instantaneous)
+            transform.localRotation = targetRotation;
+        else
+            transform.localRotation = Quaternion.Lerp(transform.localRotation, targetRotation, Mathf.Clamp01(speed * Time.deltaTime));
     }
 }
