@@ -14,5 +14,6 @@ public abstract class AutoPilot : MonoBehaviour
     public abstract float GetPitch();
     public abstract float GetYaw();
     public abstract float GetRoll();
+    public abstract bool GetFlaps();
     public abstract bool GetBrake();
 }

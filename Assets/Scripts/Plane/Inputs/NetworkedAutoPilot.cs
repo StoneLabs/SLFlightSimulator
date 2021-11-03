@@ -128,4 +128,9 @@ public class NetworkedAutoPilot : AutoPilot
     {
         return this.brake;
     }
+
+    public override bool GetFlaps()
+    {
+        return false;
+    }
 }

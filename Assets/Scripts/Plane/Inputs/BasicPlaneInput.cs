@@ -10,12 +10,15 @@ public class BasicPlaneInput : PlaneInput
 {
     bool autoPilotEngaged = false;
     bool breakesEngaged = false;
+    bool flapsEngaged = false;
     private void Update()
     {
         if (Input.GetKeyDown("t"))
             autoPilotEngaged = !autoPilotEngaged;
         if (Input.GetKeyDown("b"))
             breakesEngaged = !breakesEngaged;
+        if (Input.GetKeyDown("f"))
+            flapsEngaged = !flapsEngaged;
     }
 
     public override float GetThrottle()
@@ -37,6 +40,10 @@ public class BasicPlaneInput : PlaneInput
     public override bool GetBreak()
     {
         return breakesEngaged;
+    }
+    public override bool GetFlaps()
+    {
+        return flapsEngaged;
     }
     public override bool IsAutoPilot()
     {

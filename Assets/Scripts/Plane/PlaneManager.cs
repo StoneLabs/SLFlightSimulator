@@ -41,6 +41,7 @@ public class PlaneManager : MonoBehaviour
     public float SteeringPitch { get; private set; }
     public float SteeringYaw { get; private set; }
     public float SteeringRoll { get; private set; }
+    public bool SteeringFlaps { get; private set; }
     public bool WheelBreaks { get; private set; }
 
     [Header("Wheels")]
@@ -85,6 +86,7 @@ public class PlaneManager : MonoBehaviour
             SteeringRoll = autoPilot.GetRoll();
             SteeringYaw = autoPilot.GetYaw();
             WheelBreaks = autoPilot.GetBrake();
+            SteeringFlaps = autoPilot.GetFlaps();
         }
         else
         {
@@ -93,6 +95,7 @@ public class PlaneManager : MonoBehaviour
             SteeringRoll = input.GetRoll();
             SteeringYaw = input.GetYaw();
             WheelBreaks = input.GetBreak();
+            SteeringFlaps = input.GetFlaps();
         }
 
         // Clamp values for control axes
@@ -133,7 +136,7 @@ public class PlaneManager : MonoBehaviour
 
         // Update control surface positions
         foreach (ControlSurface surface in controlSurfaces)
-            surface.control(SteeringPitch, SteeringYaw, SteeringRoll);
+            surface.control(SteeringPitch, SteeringYaw, SteeringRoll, SteeringFlaps ? 1 : 0);
 
         // Perform physics calculation
         physics.applyPhysics();
@@ -163,7 +166,7 @@ public class PlaneManager : MonoBehaviour
 
         // Visualize debug information on left side
 
-        GUI.Box(new Rect(0, 150, 310, 440), "");
+        GUI.Box(new Rect(0, 150, 310, 460), "");
         int y = 150;
         GUI.Label(new Rect(5, y, 300, 400), "PLANE DEBUG INFORMATION");
         GUI.Label(new Rect(5, y += 40, 300, 400), $"World Position ({transform.position.x / 1000:F2}, {transform.position.z / 1000:F2})km");
@@ -184,6 +187,7 @@ public class PlaneManager : MonoBehaviour
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringPitch, -1, 1);
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringRoll, -1, 1);
         GUI.HorizontalSlider(new Rect(5, y += 20, 300, 40), SteeringYaw, -1, 1);
+        GUI.Label(new Rect(5, y += 20, 300, 400), SteeringFlaps ? $"Flaps engaged!" : "");
         GUI.Label(new Rect(5, y += 20, 300, 400), WheelBreaks ? $"Wheel Brakes engaged!" : "");
         GUI.Label(new Rect(5, y += 40, 300, 400), $"Engine 1 RPM: {physics.engines[0].RPM:F0}");
 

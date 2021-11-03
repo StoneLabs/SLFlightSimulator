@@ -18,7 +18,7 @@ public class ControlWheel : ControlSurface
     public float GizmosThrustDivider = 50.0f;
 
     // Override/implement ControlSurface class's control function for steering information
-    public override void control(float pitch, float yaw, float roll)
+    public override void control(float pitch, float yaw, float roll, float flaps)
     {
         if (axis == ControlAxis.None)
             return;
