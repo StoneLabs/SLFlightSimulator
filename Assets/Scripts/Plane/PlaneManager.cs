@@ -193,12 +193,13 @@ public class PlaneManager : MonoBehaviour
 
         // Visualize keybinds on right side
 
-        GUI.Box(new Rect(Screen.width - 185, 150, 185, 265 + respawnPoints.Length * 20), "");
+        GUI.Box(new Rect(Screen.width - 185, 150, 185, 285 + respawnPoints.Length * 20), "");
         GUI.Label(new Rect(Screen.width - 180, y = 150, 300, 400), $"CONTROLS");
         GUI.Label(new Rect(Screen.width - 180, y += 40, 300, 400), $"Shift/Ctrl - Throttle");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"W/S - Pitch");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"A/D - Roll");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"Q/E - Yaw");
+        GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"F - Toggle flaps");
         GUI.Label(new Rect(Screen.width - 180, y += 40, 300, 400), $"T - Toggle Autopilot");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"O - Toggle wind");
         GUI.Label(new Rect(Screen.width - 180, y += 20, 300, 400), $"L - Toggle Aerobatic smoke");
